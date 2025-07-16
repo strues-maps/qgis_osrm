@@ -1,0 +1,17 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+[project]
+description = ""
+version = "1.0.0"
+[tool.qgis-plugin-ci]
+plugin_path = "."
+github_organization_slug = "strues-maps"
+project_slug = "qgis-osrm"
+[tool.pylint.main]
+init-hook='import sys; sys.path.append("/usr/share/qgis/python/plugins"); sys.path.append("/usr/share/qgis/python"); sys.path.append("/usr/lib");  sys.path.append("/usr/lib/qgis")'
+extension-pkg-whitelist = ["PyQt5"]
+[tool.pylint.format]
+max-line-length = 79
+[tool.pylint.'MESSAGES CONTROL']
+disable = ["too-many-instance-attributes", "too-many-arguments", "too-many-locals", "too-many-return-statements", "too-many-statements", "too-many-branches", "too-few-public-methods", "import-outside-toplevel", "duplicate-code"]

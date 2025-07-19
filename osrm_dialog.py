@@ -50,6 +50,8 @@ class OSRMDialog(QDialog, FORM_CLASS_DIALOG_BASE, TemplateOsrm):
     def __init__(self, iface, parent=None):
         """Constructor."""
         super().__init__(parent)
+        TemplateOsrm.__init__(self)
+
         self.setupUi(self)
         self.iface = iface
         self.canvas = iface.mapCanvas()
@@ -61,10 +63,10 @@ class OSRMDialog(QDialog, FORM_CLASS_DIALOG_BASE, TemplateOsrm):
         self.pushButtonTryIt.clicked.connect(self.get_route)
         self.pushButtonReverse.clicked.connect(self.reverse_origin_destination)
         self.pushButtonClear.clicked.connect(self.clear_all_single)
-        self.base_url = 'http://127.0.0.1:5000/{action}/v1/driving/'
         self.parsed = None
         self.destination = None
         self.nb_alternative = None
+        self.load_providers()
 
     def store_intermediate(self, point):
         """Store intermediate points for route"""
@@ -254,12 +256,19 @@ class OSRMDialog(QDialog, FORM_CLASS_DIALOG_BASE, TemplateOsrm):
                 f"?overview=full&alternatives={alternative}"
             ])
 
+        if self.api_key:
+            url = ''.join([url, '&api_key=', self.api_key])
         print(f"Fetch route query: {url}")
 
         try:
             self.parsed = self.query_url(url)
             assert "code" in self.parsed
-        except (URLError, HTTPError, ContentTooShortError) as err:
+        except (
+            URLError,
+            HTTPError,
+            ContentTooShortError,
+            AssertionError
+        ) as err:
             self.display_error(err, 1)
             return -1
 

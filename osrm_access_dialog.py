@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 /***************************************************************************
- OSRMDialogAll
+ OSRMAccessDialog
                                  A QGIS plugin
- Find a route with OSRM
+ Calculating access isochrones
                              -------------------
         begin                : 2015-09-29
         copyright            : (C) 2015 by mthh
@@ -50,6 +50,8 @@ class OSRMAccessDialog(QDialog, FORM_CLASS_ACCESS_DIALOG_BASE, TemplateOsrm):
     def __init__(self, iface, parent=None):
         """Constructor."""
         super().__init__(parent)
+        TemplateOsrm.__init__(self)
+
         self.setupUi(self)
         self.iface = iface
         self.canvas = iface.mapCanvas()
@@ -65,7 +67,7 @@ class OSRMAccessDialog(QDialog, FORM_CLASS_ACCESS_DIALOG_BASE, TemplateOsrm):
         self.progress = None
         self.polygons = None
         self.max_points = 0
-        self.base_url = 'http://127.0.0.1:5000/{action}/v1/driving/'
+        self.load_providers()
 
     def change_nb_center(self):
         """Update isochrones centers count in UI"""
@@ -192,7 +194,8 @@ class OSRMAccessDialog(QDialog, FORM_CLASS_ACCESS_DIALOG_BASE, TemplateOsrm):
                 "max": max_time,
                 "levels": levels,
                 "url": self.prepare_request_url(self.base_url, 'table'),
-                "max_points": self.max_points
+                "max_points": self.max_points,
+                "api_key": self.api_key
             }
             for pt in pts
         ]

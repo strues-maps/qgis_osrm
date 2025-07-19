@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 /***************************************************************************
- OSRMDialogAll
+ OSRMBatchRouteDialog
                                  A QGIS plugin
- Find a route with OSRM
+ Batch route calculation
                              -------------------
         begin                : 2015-09-29
         copyright            : (C) 2015 by mthh
@@ -52,6 +52,8 @@ class OSRMBatchRouteDialog(QDialog, FORM_CLASS_BATCH_ROUTE, TemplateOsrm):
     def __init__(self, iface, parent=None):
         """Constructor."""
         super().__init__(parent)
+        TemplateOsrm.__init__(self)
+
         self.setupUi(self)
         self.iface = iface
         self.ComboBoxOrigin.setFilters(QgsMapLayerProxyModel.PointLayer)
@@ -76,8 +78,8 @@ class OSRMBatchRouteDialog(QDialog, FORM_CLASS_BATCH_ROUTE, TemplateOsrm):
         self.nb_done = 0
         self.errors = 0
         self.filename = None
-        self.base_url = 'http://127.0.0.1:5000/{action}/v1/driving/'
         self.encoding = None
+        self.load_providers()
 
     def add_host(self, text):
         """Set host configuration"""
@@ -298,9 +300,11 @@ class OSRMBatchRouteDialog(QDialog, FORM_CLASS_BATCH_ROUTE, TemplateOsrm):
                 [
                     self.prepare_request_url(self.base_url, 'route'),
                     f"{xo},{yo};{xd},{yd}?overview=full&steps=false&"
-                    "alternatives=false"
+                    f"alternatives=false"
                 ]
             )
+            if self.api_key:
+                url = ''.join([url, '&api_key=', self.api_key])
             parsed = self.query_url(url)
         except (URLError, HTTPError, ContentTooShortError) as err:
             self.display_error(err, 1)

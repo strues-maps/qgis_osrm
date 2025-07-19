@@ -1,0 +1,16 @@
+providers:
+- api_key: ''
+  base_url: http://127.0.0.1:5000/{action}/v1/driving/
+  name: Local OSRM at port 5000
+- api_key: ''
+  base_url: https://routing.openstreetmap.de/routed-bike/{action}/v1/driving/
+  name: OSM DE Bike Routing
+- api_key: ''
+  base_url: https://routing.openstreetmap.de/routed-car/{action}/v1/driving/
+  name: OSM DE Car Routing
+- api_key: ''
+  base_url: https://routing.openstreetmap.de/routed-foot/{action}/v1/driving/
+  name: OSM DE Foot Routing
+- api_key: API_KEY
+  base_url: https://api.strues-maps.lt/v1/{action}/
+  name: Strues-Maps Car Routing

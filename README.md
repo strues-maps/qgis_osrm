@@ -5,19 +5,18 @@ Routing with OSRM
 This plugin is available for QGIS version 3.44 and is under active development.
 Plugin source code is available at https://github.com/strues-maps/qgis_osrm .
 This plugin is licensed under GNU GPL v2.0 or later.
- 
+
 This plugin was developed by porting relevant parts from osrm-qgis-plugin for
 QGIS2 by Matthieu Viry. QGIS2 plugin was available at https://github.com/mthh/osrm-qgis-plugin .
 
 TODO
 ====
-- create an url and api key configuration window;
-- support QGIS 3.42, 3.40, and older versions;
 - add export distances option in route matrix;
 - redraw layers after base route is removed
 - redraw layers after isochrones are removed
 - redraw layers after traveling salesman routes are removed
 - remove traveling salesman markers layer on clear previous
+- support QGIS 3.28 - 3.44;
 - write units tests
 
 INHERITED TODO

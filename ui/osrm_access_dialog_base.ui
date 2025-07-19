@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>OSRMDialogBase</class>
- <widget class="QDialog" name="OSRMDialogBase">
+ <class>OSRMAccessDialog</class>
+ <widget class="QDialog" name="OSRMAccessDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -174,7 +174,7 @@
     <string>Select Provider:</string>
    </property>
   </widget>
-  <widget class="QComboBox" name="comboBox_provider">
+  <widget class="QComboBox" name="combo_box_provider">
    <property name="geometry">
     <rect>
      <x>150</x>
@@ -339,7 +339,7 @@
   <connection>
    <sender>close_button_box</sender>
    <signal>accepted()</signal>
-   <receiver>OSRMDialogBase</receiver>
+   <receiver>OSRMAccessDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -355,7 +355,7 @@
   <connection>
    <sender>close_button_box</sender>
    <signal>rejected()</signal>
-   <receiver>OSRMDialogBase</receiver>
+   <receiver>OSRMAccessDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

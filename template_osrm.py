@@ -32,6 +32,10 @@ from qgis.core import (  # pylint: disable = no-name-in-module
     QgsCoordinateReferenceSystem, QgsCoordinateTransform,
     QgsMessageLog, QgsCoordinateTransformContext, Qgis
 )
+from .osrm_utils import (
+    read_providers_config, save_last_provider,
+    load_last_provider
+)
 
 
 class TemplateOsrm:
@@ -41,13 +45,25 @@ class TemplateOsrm:
     """
 
     def __init__(self):
-        self.host = None
         self.iface = None
         self.canvas = None
         self.progress = None
         self.origin = None
         self.origin_emit = None
         self.lineEdit_xyO = None  # pylint: disable=invalid-name
+        self.combo_box_provider = None
+        self.base_url = None
+        self.api_key = None
+        self.providers = None
+        self.last_provider = None
+
+    def load_providers(self):
+        """Load providers, mark last used and handle provider change signal"""
+        self.load_last_provider()
+        self.populate_combo_box_provider()
+        self.combo_box_provider.currentTextChanged.connect(
+            self.provider_changed
+        )
 
     def display_error(self, error, code):
         """Displays error message in message bar and message log"""
@@ -157,3 +173,39 @@ class TemplateOsrm:
     def prepare_request_url(self, base_url, action):
         """Build request url from base url and appropriate action"""
         return base_url.replace('{action}', action)
+
+    def provider_changed(self):
+        """Handle provider selection action"""
+        provider_index = self.combo_box_provider.currentIndex()
+        provider = self.providers[provider_index]
+        self.base_url = provider["base_url"]
+        self.api_key = provider["api_key"]
+        self.last_provider = provider["name"]
+        save_last_provider(provider["name"])
+
+    def load_last_provider(self):
+        """Load name of last used provider in plugin"""
+        self.last_provider = load_last_provider()
+
+    def populate_combo_box_provider(self):
+        """Populates combo box with provider names"""
+        try:
+            self.providers = read_providers_config()
+            names = [
+                provider["name"]
+                for provider in self.providers
+            ]
+            self.combo_box_provider.addItems(names)
+
+            if self.last_provider in names:
+                provider_index = names.index(self.last_provider)
+                self.combo_box_provider.setCurrentIndex(provider_index)
+                self.base_url = self.providers[provider_index]["base_url"]
+                self.api_key = self.providers[provider_index]["api_key"]
+        except (AssertionError, ValueError) as err:
+            QMessageBox.warning(
+                self.iface.mainWindow(),
+                'Error',
+                f"Invalid providers configuration file! {err}"
+            )
+            self.providers = []

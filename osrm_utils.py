@@ -23,10 +23,13 @@
  *                                                                         *
  ***************************************************************************/
 """
+import os
+from configparser import ConfigParser
 from urllib.request import urlopen
 from urllib.error import URLError, HTTPError, ContentTooShortError
 from functools import lru_cache
 import json
+import yaml
 import numpy as np
 from PyQt5.QtGui import QColor
 from PyQt5.QtCore import QSettings, QFileInfo
@@ -49,7 +52,8 @@ __all__ = ['save_dialog', 'save_dialog_geo', 'prep_access',
            'encode_to_polyline', 'interpolate_from_times', 'get_coords_ids',
            'pts_ref', "put_on_top", 'decode_geom', 'fetch_table',
            'decode_geom_to_pts', 'fetch_nearest',
-           'make_regular_points', 'get_search_frame', 'get_isochrones_colors']
+           'make_regular_points', 'get_search_frame', 'get_isochrones_colors',
+           'read_providers_config', 'save_last_provider', 'load_last_provider']
 
 
 matplotlib_use('agg')
@@ -92,11 +96,12 @@ def prep_access(time_param):
     max_time = time_param['max']
     levels = time_param["levels"]
     url = time_param["url"]
+    api_key = time_param["api_key"]
 
     bounds = get_search_frame(point, max_time)
     coords_grid = make_regular_points(bounds, time_param["max_points"])
 
-    table_data = fetch_table(url, [point], coords_grid)
+    table_data = fetch_table(url, api_key, [point], coords_grid)
     times = table_data[0]
     snapped_dest_coords = table_data[2]
 
@@ -283,7 +288,7 @@ def decode_geom(encoded_polyline):
     )
 
 
-def fetch_table(url, coords_src, coords_dest):
+def fetch_table(url, api_key, coords_src, coords_dest):
     """
     Function wrapping OSRM 'table' function in order to get a matrix of
     time distance as a numpy array
@@ -313,10 +318,14 @@ def fetch_table(url, coords_src, coords_dest):
     if not coords_dest:
         query = ''.join(
             [
-                url, "polyline(",
-                encode_to_polyline([(c[1], c[0]) for c in coords_src]), ")"
+                url,
+                "polyline(",
+                encode_to_polyline([(c[1], c[0]) for c in coords_src]),
+                ")"
             ]
         )
+        if api_key:
+            query = ''.join([query, '?api_key=', api_key])
     else:
         src_end = len(coords_src)
         dest_end = src_end + len(coords_dest)
@@ -335,12 +344,15 @@ def fetch_table(url, coords_src, coords_dest):
             '&destinations=',
             ';'.join([str(j) for j in range(src_end, dest_end)])
         ])
+        if api_key:
+            query = ''.join([query, '&api_key=', api_key])
 
     print(f"Fetch table query: {query}")
 
     try:
         with urlopen(query) as res:
-            parsed_json = json.loads(res.read(), strict=False)
+            content = res.read()
+            parsed_json = json.loads(content, strict=False)
             assert parsed_json["code"] == "Ok"
             assert "durations" in parsed_json
     except AssertionError as er:
@@ -399,8 +411,7 @@ def fetch_nearest(host, profile, coord):
     try:  # Querying the OSRM instance
         with urlopen(url) as rep:
             parsed_json = json.loads(rep.read(), strict=False)
-    except (URLError, HTTPError, ContentTooShortError) as err:
-        print(err)
+    except (URLError, HTTPError, ContentTooShortError):
         return False
     if 'code' not in parsed_json or "Ok" not in parsed_json['code']:
         return False
@@ -494,3 +505,68 @@ def get_isochrones_colors(nb_features):
                  '#fff6a0', '#fee08b', '#fdae61', '#f46d43', '#d73027',
                  '#bb2921', '#a50026'),
             }[nb_features]
+
+
+def read_providers_config():
+    """Read OSRM providers configuration from file"""
+    providers_file = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)),
+        'providers.yml'
+    )
+
+    try:
+        with open(providers_file, encoding="utf-8") as f:
+            cfg = yaml.safe_load(f)
+            assert "providers" in cfg
+            assert isinstance(cfg["providers"], list)
+            for provider in cfg["providers"]:
+                assert isinstance(provider, dict)
+                assert "name" in provider
+                assert "base_url" in provider
+                assert "api_key" in provider
+
+            return cfg["providers"]
+    except (AssertionError, ValueError) as err:
+        with open(providers_file, 'w', encoding="utf-8") as fp:
+            fp.write("")
+            fp.close()
+        raise err
+
+
+def write_providers_config(providers):
+    """Write OSRM providers configuration to file"""
+    providers_file = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)),
+        'providers.yml'
+    )
+    with open(providers_file, 'w', encoding="utf-8") as fp:
+        yaml.dump({"providers": providers}, fp, default_flow_style=False)
+
+
+def save_last_provider(name):
+    """Save last used provider"""
+    config_file = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)),
+        'config.ini'
+    )
+    config = ConfigParser()
+    config.read(config_file, encoding="utf-8")
+
+    if not config.has_section('provider'):
+        config.add_section('provider')
+
+    config.set('provider', 'last_provider', name)
+
+    with open(config_file, 'w', encoding="utf-8") as fp:
+        config.write(fp)
+
+
+def load_last_provider():
+    """Load last used provider"""
+    config_file = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)),
+        'config.ini'
+    )
+    config = ConfigParser()
+    config.read(config_file)
+    return config.get('provider', 'last_provider')

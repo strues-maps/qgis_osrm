@@ -34,6 +34,7 @@ from .osrm_table_dialog import OSRMTableDialog
 from .osrm_access_dialog import OSRMAccessDialog
 from .osrm_dialog_tsp import OSRMDialogTSP
 from .osrm_batch_route_dialog import OSRMBatchRouteDialog
+from .osrm_provider_dialog import OSRMProviderDialog
 
 
 class OsrmPlugin:
@@ -133,6 +134,13 @@ class OsrmPlugin:
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
 
         self.add_action(
+            None,
+            text=self.tr('Configure providers'),
+            callback=self.run_configure,
+            parent=self.qgis_iface.mainWindow()
+        )
+
+        self.add_action(
             ':/plugins/qgis-osrm/img/icon.png',
             text=self.tr('Find a route with OSRM'),
             callback=self.run_route,
@@ -227,6 +235,12 @@ class OsrmPlugin:
         )
         self.dlg.pushButtonIntermediate.clicked.connect(self.get_intermediate)
         self.dlg.pushButton_about.clicked.connect(self.dlg.print_about)
+        self.dlg.show()
+
+    def run_configure(self):
+        """Run the window for configuring providers"""
+        self.dlg = OSRMProviderDialog(iface)
+        self.dlg.push_button_about.clicked.connect(self.dlg.print_about)
         self.dlg.show()
 
     def get_origin(self):

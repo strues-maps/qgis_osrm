@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 /***************************************************************************
- OSRMDialogAll
+ OSRMDialogTSP
                                  A QGIS plugin
- Dialog for traveling salesman problem
+ Traveling salesman problem
                              -------------------
         begin                : 2015-09-29
         copyright            : (C) 2015 by mthh
@@ -51,6 +51,7 @@ class OSRMDialogTSP(QDialog, FORM_CLASS_DIALOG_TSP, TemplateOsrm):
     def __init__(self, iface, parent=None):
         """ Constructor"""
         super().__init__(parent)
+        TemplateOsrm.__init__(self)
         self.setupUi(self)
         self.iface = iface
         self.pushButton_display.clicked.connect(self.run_tsp)
@@ -59,7 +60,7 @@ class OSRMDialogTSP(QDialog, FORM_CLASS_DIALOG_TSP, TemplateOsrm):
         self.nb_route = 0
         self.parsed = None
         self.tsp_marker_lr = None
-        self.base_url = 'http://127.0.0.1:5000/{action}/v1/driving/'
+        self.load_providers()
 
     def clear_results(self):
         """
@@ -85,10 +86,11 @@ class OSRMDialogTSP(QDialog, FORM_CLASS_DIALOG_TSP, TemplateOsrm):
         query = ''.join(
             [
                 self.prepare_request_url(self.base_url, 'trip'),
-                ";".join([f"{c[0]},{c[1]}" for c in coords])
+                ";".join([f"{c[0]},{c[1]}" for c in coords]),
             ]
         )
-
+        if self.api_key:
+            query = ''.join([query, '?api_key=', self.api_key])
         print(f"Fetch traveling salesman query: {query}")
 
         try:

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>OSRM_Table_DialogBase</class>
- <widget class="QDialog" name="OSRM_Table_DialogBase">
+ <class>OSRMDialogTSP</class>
+ <widget class="QDialog" name="OSRMDialogTSP">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -94,7 +94,7 @@
     <string>Clear previous results</string>
    </property>
   </widget>
-  <widget class="QComboBox" name="comboBox_provider">
+  <widget class="QComboBox" name="combo_box_provider">
    <property name="geometry">
     <rect>
      <x>150</x>
@@ -232,7 +232,7 @@
   <connection>
    <sender>close_button_box</sender>
    <signal>accepted()</signal>
-   <receiver>OSRM_Table_DialogBase</receiver>
+   <receiver>OSRMDialogTSP</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -248,7 +248,7 @@
   <connection>
    <sender>close_button_box</sender>
    <signal>rejected()</signal>
-   <receiver>OSRM_Table_DialogBase</receiver>
+   <receiver>OSRMDialogTSP</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

@@ -3,7 +3,7 @@
 /***************************************************************************
  OSRMTableDialog
                                  A QGIS plugin
- Find a route with OSRM
+ Route distance/time table
                              -------------------
         begin                : 2015-09-29
         copyright            : (C) 2015 by mthh
@@ -48,6 +48,7 @@ class OSRMTableDialog(QDialog, FORM_CLASS_TABLE_DIALOG_BASE, TemplateOsrm):
     def __init__(self, iface, parent=None):
         """Constructor."""
         super().__init__(parent)
+        TemplateOsrm.__init__(self)
 
         self.setupUi(self)
         self.iface = iface
@@ -80,7 +81,7 @@ class OSRMTableDialog(QDialog, FORM_CLASS_TABLE_DIALOG_BASE, TemplateOsrm):
         self.pushButton_fetch.clicked.connect(self.get_table)
         self.filename = None
         self.encoding = None
-        self.base_url = 'http://127.0.0.1:5000/{action}/v1/driving/'
+        self.load_providers()
 
     def output_dialog(self):
         """
@@ -119,7 +120,7 @@ class OSRMTableDialog(QDialog, FORM_CLASS_TABLE_DIALOG_BASE, TemplateOsrm):
         url = self.prepare_request_url(self.base_url, 'table')
 
         try:
-            table = fetch_table(url, coords_src, coords_dest)
+            table = fetch_table(url, self.api_key, coords_src, coords_dest)
         except ValueError as err:
             self.display_error(err, 1)
             return -1

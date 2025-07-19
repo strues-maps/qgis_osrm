@@ -35,6 +35,37 @@ sudo pip install qgis-plugin-ci --break-system-packages
 
 EXAMPLES
 ========
+Images of this page are displayed on OpenStreetMap tiles (© OpenStreetMap contributors) and route computations were done with Open Source Routing Machine.
+
+Find a route
+------------
+**Display a simple route from OSRM (with support of viapoints, alternatives roads and route instructions)**:
+
+![route illustration](img/route.jpg)
+
+Fetch a time-distance matrix
+----------------------------
+**Get a time matrix from one (or between two) QGIS point layer(s)**:
+
+![table illustration](img/table.jpg)
+
+Compute accessibility isochrones
+--------------------------------
+**Compute monocentric or polycentric accessibility isochrones**:
+
+![isochrone illustration](img/multi_isochrone.jpg)
+
+Compute many *viaroute*
+-----------------------
+**Retrieve many routes between two QGIS layer of points**:
+
+![batch routes illustration](img/many_routes.jpg)
+
+Display the solution of the Travelling Salesman Problem
+-------------------------------------------------------
+**Display the result of the Travelling Salesman Problem computed by OSRM**:
+
+![tsp illustration](img/tsp.jpg)
 
 
 FOUND A BUG?

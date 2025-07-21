@@ -11,7 +11,6 @@ QGIS2 by Matthieu Viry. QGIS2 plugin was available at https://github.com/mthh/os
 
 TODO
 ====
-- remove traveling salesman markers layer on clear previous
 - redraw layers after base route is removed
 - redraw layers after isochrones are removed
 - redraw layers after traveling salesman routes are removed

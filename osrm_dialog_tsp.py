@@ -69,6 +69,8 @@ class OSRMDialogTSP(QDialog, FORM_CLASS_DIALOG_TSP, TemplateOsrm):
         for layer in QgsProject.instance().mapLayers():
             if 'tsp_solution_osrm' in layer:
                 QgsProject.instance().removeMapLayer(layer)
+            if 'tsp_markers_osrm' in layer:
+                QgsProject.instance().removeMapLayer(layer)
         self.nb_route = 0
 
     def run_tsp(self):

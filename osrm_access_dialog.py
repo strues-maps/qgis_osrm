@@ -61,6 +61,7 @@ class OSRMAccessDialog(QDialog, FORM_CLASS_ACCESS_DIALOG_BASE, TemplateOsrm):
         self.comboBox_method.activated[str].connect(self.enable_functionnality)
         self.pushButton_fetch.clicked.connect(self.get_access_isochrones)
         self.pushButtonClear.clicked.connect(self.clear_all_isochrone)
+        self.close_button_box.clicked.connect(self.close_button_clicked)
         self.lineEdit_xyO.textChanged.connect(self.change_nb_center)
         self.intermediate = []
         self.nb_isocr = 0
@@ -68,6 +69,17 @@ class OSRMAccessDialog(QDialog, FORM_CLASS_ACCESS_DIALOG_BASE, TemplateOsrm):
         self.polygons = None
         self.max_points = 0
         self.load_providers()
+
+    def closeEvent(self, event):  # pylint: disable=invalid-name
+        """Handle window close event"""
+        self.canvas.unsetMapTool(self.origin_emit)
+        self.canvas.unsetMapTool(self.intermediate_emit)
+        super().closeEvent(event)
+
+    def close_button_clicked(self):
+        """Handle close button in dialog event"""
+        self.canvas.unsetMapTool(self.origin_emit)
+        self.canvas.unsetMapTool(self.intermediate_emit)
 
     def change_nb_center(self):
         """Update isochrones centers count in UI"""

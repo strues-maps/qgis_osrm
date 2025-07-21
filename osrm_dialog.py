@@ -63,10 +63,24 @@ class OSRMDialog(QDialog, FORM_CLASS_DIALOG_BASE, TemplateOsrm):
         self.pushButtonTryIt.clicked.connect(self.get_route)
         self.pushButtonReverse.clicked.connect(self.reverse_origin_destination)
         self.pushButtonClear.clicked.connect(self.clear_all_single)
+        self.close_button_box.clicked.connect(self.close_button_clicked)
         self.parsed = None
         self.destination = None
         self.nb_alternative = None
         self.load_providers()
+
+    def closeEvent(self, event):  # pylint: disable=invalid-name
+        """Handle window close event"""
+        self.canvas.unsetMapTool(self.origin_emit)
+        self.canvas.unsetMapTool(self.intermediate_emit)
+        self.canvas.unsetMapTool(self.destination_emit)
+        super().closeEvent(event)
+
+    def close_button_clicked(self):
+        """Handle close button in dialog event"""
+        self.canvas.unsetMapTool(self.origin_emit)
+        self.canvas.unsetMapTool(self.intermediate_emit)
+        self.canvas.unsetMapTool(self.destination_emit)
 
     def store_intermediate(self, point):
         """Store intermediate points for route"""

@@ -11,7 +11,6 @@ QGIS2 by Matthieu Viry. QGIS2 plugin was available at https://github.com/mthh/os
 
 TODO
 ====
-- ensure that the MapToolEmitPoint is unset when the plugin window is closed
 - batch route calculation - implement load csv file with origins and destinations
 - prep_instruction - itineraries window for route
 - support QGIS 3.28 - 3.44;

@@ -111,9 +111,14 @@ class OSRMDialog(QDialog, FORM_CLASS_DIALOG_BASE, TemplateOsrm):
         self.lineEdit_xyD.setText('')
         self.lineEdit_xyI.setText('')
         self.intermediate = []
+        needs_repaint = False
+
         for layer in QgsProject.instance().mapLayers():
             if 'route_osrm' in layer or 'markers_osrm' in layer:
                 QgsProject.instance().removeMapLayer(layer)
+                needs_repaint = True
+        if needs_repaint:
+            self.repaint_layers()
         self.nb_route = 0
 
     # def prep_instruction(self, alt=None, provider=None,

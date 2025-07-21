@@ -100,9 +100,13 @@ class OSRMAccessDialog(QDialog, FORM_CLASS_ACCESS_DIALOG_BASE, TemplateOsrm):
         """
         self.lineEdit_xyO.setText('')
         self.nb_isocr = 0
+        needs_repaint = False
         for layer in QgsProject.instance().mapLayers():
             if 'isochrone_osrm' in layer or 'isochrone_center' in layer:
                 QgsProject.instance().removeMapLayer(layer)
+                needs_repaint = True
+        if needs_repaint:
+            self.repaint_layers()
 
     def store_intermediate_acces(self, point):
         """Store intermediate isochrone point"""

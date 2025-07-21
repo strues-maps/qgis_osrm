@@ -30,7 +30,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QMessageBox, QProgressBar
 from qgis.core import (  # pylint: disable = no-name-in-module
     QgsCoordinateReferenceSystem, QgsCoordinateTransform,
-    QgsMessageLog, QgsCoordinateTransformContext, Qgis
+    QgsMessageLog, QgsCoordinateTransformContext, Qgis, QgsProject
 )
 from .osrm_utils import (
     read_providers_config, save_last_provider,
@@ -209,3 +209,14 @@ class TemplateOsrm:
                 f"Invalid providers configuration file! {err}"
             )
             self.providers = []
+
+    def repaint_layers(self):
+        """Repaint layers if at least on of them is visible"""
+        layer_tree_root = QgsProject.instance().layerTreeRoot()
+        for layer in QgsProject.instance().mapLayers().values():
+            layer_tree_layer = layer_tree_root.findLayer(layer)
+            if layer_tree_layer.isVisible():
+                layer.triggerRepaint()
+                return 0
+
+        return 0

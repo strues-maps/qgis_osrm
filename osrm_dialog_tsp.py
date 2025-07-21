@@ -66,11 +66,16 @@ class OSRMDialogTSP(QDialog, FORM_CLASS_DIALOG_TSP, TemplateOsrm):
         """
         Clear previous result and set back counter to 0.
         """
+        needs_repaint = False
         for layer in QgsProject.instance().mapLayers():
             if 'tsp_solution_osrm' in layer:
                 QgsProject.instance().removeMapLayer(layer)
+                needs_repaint = True
             if 'tsp_markers_osrm' in layer:
                 QgsProject.instance().removeMapLayer(layer)
+                needs_repaint = True
+        if needs_repaint:
+            self.repaint_layers()
         self.nb_route = 0
 
     def run_tsp(self):

@@ -72,6 +72,7 @@ class OSRMBatchRouteDialog(QDialog, FORM_CLASS_BATCH_ROUTE, TemplateOsrm):
             self.reverse_origin_destination_batch)
         self.pushButtonBrowse.clicked.connect(self.output_dialog_geo)
         self.pushButtonRun.clicked.connect(self.get_batch_route)
+        self.pushButtonClear.clicked.connect(self.clear_all_routes)
         self.comboBox_method.activated[str].connect(self.enable_functionnality)
         self.ComboBoxCsv.layerChanged.connect(self._set_layer_field_combo)
         self.nb_route = 0
@@ -81,10 +82,19 @@ class OSRMBatchRouteDialog(QDialog, FORM_CLASS_BATCH_ROUTE, TemplateOsrm):
         self.encoding = None
         self.load_providers()
 
-    def add_host(self, text):
-        """Set host configuration"""
-        if "Add an url" in text:
-            pass
+    def clear_all_routes(self):
+        """
+        Clear previously done route paths
+        """
+        self.nb_route = 0
+        self.nb_done = 0
+        needs_repaint = False
+        for layer in QgsProject.instance().mapLayers():
+            if 'routes_osrm' in layer:
+                QgsProject.instance().removeMapLayer(layer)
+                needs_repaint = True
+        if needs_repaint:
+            self.repaint_layers()
 
     def _set_layer_field_combo(self, layer):
         """Sets layer for field oridin and destination coordinates"""

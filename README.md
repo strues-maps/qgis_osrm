@@ -11,17 +11,11 @@ QGIS2 by Matthieu Viry. QGIS2 plugin was available at https://github.com/mthh/os
 
 TODO
 ====
-- redraw layers after base route is removed
-- redraw layers after isochrones are removed
-- redraw layers after traveling salesman routes are removed
-- support QGIS 3.28 - 3.44;
-- write units tests
-
-INHERITED TODO
-==============
 - ensure that the MapToolEmitPoint is unset when the plugin window is closed
 - batch route calculation - implement load csv file with origins and destinations
 - prep_instruction - itineraries window for route
+- support QGIS 3.28 - 3.44;
+- write units tests
 
 PREPARE DEVELOPMENT ENVIRONMENT
 ===============================

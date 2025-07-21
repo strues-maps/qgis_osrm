@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>448</width>
-    <height>549</height>
+    <height>579</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <property name="geometry">
     <rect>
      <x>11</x>
-     <y>500</y>
+     <y>530</y>
      <width>85</width>
      <height>27</height>
     </rect>
@@ -35,7 +35,7 @@
    <property name="geometry">
     <rect>
      <x>335</x>
-     <y>500</y>
+     <y>530</y>
      <width>101</width>
      <height>27</height>
     </rect>
@@ -560,7 +560,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>450</y>
+     <y>480</y>
      <width>411</width>
      <height>30</height>
     </rect>
@@ -600,6 +600,35 @@
    </property>
    <property name="text">
     <string>Select layers:</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButtonClear">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>445</y>
+     <width>411</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Arial</family>
+     <pointsize>9</pointsize>
+     <kerning>true</kerning>
+    </font>
+   </property>
+   <property name="text">
+    <string>Clear previous routes</string>
+   </property>
+   <property name="default">
+    <bool>false</bool>
+   </property>
+   <property name="flat">
+    <bool>false</bool>
    </property>
   </widget>
  </widget>

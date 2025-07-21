@@ -11,11 +11,10 @@ QGIS2 by Matthieu Viry. QGIS2 plugin was available at https://github.com/mthh/os
 
 TODO
 ====
-- add export distances option in route matrix;
+- remove traveling salesman markers layer on clear previous
 - redraw layers after base route is removed
 - redraw layers after isochrones are removed
 - redraw layers after traveling salesman routes are removed
-- remove traveling salesman markers layer on clear previous
 - support QGIS 3.28 - 3.44;
 - write units tests
 

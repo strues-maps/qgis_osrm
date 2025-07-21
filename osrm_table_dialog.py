@@ -41,6 +41,9 @@ from .template_osrm import TemplateOsrm
 FORM_CLASS_TABLE_DIALOG_BASE, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'ui/osrm_table_dialog_base.ui'))
 
+METRICS_DURATION = 'Durations'
+METRICS_DISTANCE = 'Distances'
+
 
 class OSRMTableDialog(QDialog, FORM_CLASS_TABLE_DIALOG_BASE, TemplateOsrm):
     """Dialog for route distance/time table"""
@@ -53,6 +56,7 @@ class OSRMTableDialog(QDialog, FORM_CLASS_TABLE_DIALOG_BASE, TemplateOsrm):
         self.setupUi(self)
         self.iface = iface
         self.encoding = "System"
+        self.metrics = METRICS_DURATION
         self.pushButton_fetch.setDisabled(True)
         self.comboBox_layer.setFilters(QgsMapLayerProxyModel.PointLayer)
 
@@ -77,11 +81,22 @@ class OSRMTableDialog(QDialog, FORM_CLASS_TABLE_DIALOG_BASE, TemplateOsrm):
         self.comboBox_layer_2.layerChanged.connect(
             self.comboBox_idfield_2.setLayer
         )
+        self.combo_box_metrics.currentTextChanged.connect(
+            self.metrics_changed
+        )
         self.pushButton_browse.clicked.connect(self.output_dialog)
         self.pushButton_fetch.clicked.connect(self.get_table)
         self.filename = None
         self.encoding = None
         self.load_providers()
+
+    def metrics_changed(self):
+        """Handle distance / duration selection action"""
+        self.metrics = self.combo_box_metrics.currentText()
+        if self.metrics == METRICS_DURATION:
+            self.checkBox_minutes.setEnabled(True)
+        else:
+            self.checkBox_minutes.setEnabled(False)
 
     def output_dialog(self):
         """
@@ -120,7 +135,13 @@ class OSRMTableDialog(QDialog, FORM_CLASS_TABLE_DIALOG_BASE, TemplateOsrm):
         url = self.prepare_request_url(self.base_url, 'table')
 
         try:
-            table = fetch_table(url, self.api_key, coords_src, coords_dest)
+            table = fetch_table(
+                url,
+                self.api_key,
+                coords_src,
+                coords_dest,
+                metrics=self.metrics
+            )
         except ValueError as err:
             self.display_error(err, 1)
             return -1
@@ -128,7 +149,8 @@ class OSRMTableDialog(QDialog, FORM_CLASS_TABLE_DIALOG_BASE, TemplateOsrm):
         table_durations = table[0]
 
         # Convert the matrix in minutes if needed :
-        if self.checkBox_minutes.isChecked():
+        if (self.checkBox_minutes.isChecked() and
+                self.metrics == METRICS_DURATION):
             table_durations = (table_durations / 60.0).round(2)
 
         # Replace the value corresponding to a not-found connection :

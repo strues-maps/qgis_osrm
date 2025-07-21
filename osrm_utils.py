@@ -288,7 +288,7 @@ def decode_geom(encoded_polyline):
     )
 
 
-def fetch_table(url, api_key, coords_src, coords_dest):
+def fetch_table(url, api_key, coords_src, coords_dest, metrics='Durations'):
     """
     Function wrapping OSRM 'table' function in order to get a matrix of
     time distance as a numpy array
@@ -315,17 +315,20 @@ def fetch_table(url, api_key, coords_src, coords_dest):
         - a list of "snapped" destination coordinates
             (or None if no destination coordinates where provided)
     """
+    metrics = metrics.lower()
     if not coords_dest:
         query = ''.join(
             [
                 url,
                 "polyline(",
                 encode_to_polyline([(c[1], c[0]) for c in coords_src]),
-                ")"
+                ")?"
+                'annotations=',
+                metrics[:-1]
             ]
         )
         if api_key:
-            query = ''.join([query, '?api_key=', api_key])
+            query = ''.join([query, 'api_key=', api_key])
     else:
         src_end = len(coords_src)
         dest_end = src_end + len(coords_dest)
@@ -342,7 +345,9 @@ def fetch_table(url, api_key, coords_src, coords_dest):
             '?sources=',
             ';'.join([str(i) for i in range(src_end)]),
             '&destinations=',
-            ';'.join([str(j) for j in range(src_end, dest_end)])
+            ';'.join([str(j) for j in range(src_end, dest_end)]),
+            '&annotations=',
+            metrics[:-1]
         ])
         if api_key:
             query = ''.join([query, '&api_key=', api_key])
@@ -352,9 +357,10 @@ def fetch_table(url, api_key, coords_src, coords_dest):
     try:
         with urlopen(query) as res:
             content = res.read()
+            print(content)
             parsed_json = json.loads(content, strict=False)
             assert parsed_json["code"] == "Ok"
-            assert "durations" in parsed_json
+            assert metrics in parsed_json
     except AssertionError as er:
         raise ValueError(
             f"Error while contacting OSRM instance : \n{er}"
@@ -364,7 +370,7 @@ def fetch_table(url, api_key, coords_src, coords_dest):
             f"Error while contacting OSRM instance : \n{err}"
         ) from err
 
-    durations = np.array(parsed_json["durations"], dtype=float)
+    durations = np.array(parsed_json[metrics], dtype=float)
     new_src_coords = [ft["location"] for ft in parsed_json["sources"]]
 
     if coords_dest:

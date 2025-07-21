@@ -160,6 +160,7 @@ class OSRMProviderDialog(
         """Populates combo box with provider names"""
         try:
             provider_index = self.combo_box_provider.currentIndex()
+            provider_index = max(0, provider_index)
             self.providers = read_providers_config()
             names = ["Select provider"] + [
                 provider["name"]

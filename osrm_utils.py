@@ -23,6 +23,7 @@
  *                                                                         *
  ***************************************************************************/
 """
+import csv
 import os
 from configparser import ConfigParser
 from urllib.request import urlopen
@@ -136,6 +137,38 @@ def save_dialog(filtering="CSV (*.csv *.CSV)"):
         QFileInfo(files[0]).absolutePath()
     )
     return (files[0], file_dialog.encoding())
+
+
+def open_dialog(filtering="CSV (*.csv *.CSV)"):
+    """Dialog for selecting csv file location"""
+    settings = QSettings()
+    dir_name = settings.value("/UI/lastCsvFileDir")
+    encode = settings.value("/UI/encoding")
+    file_dialog = QgsEncodingFileDialog(
+        None, "Choose input csv", dir_name, filtering, encode
+        )
+    file_dialog.setDefaultSuffix('csv')
+    file_dialog.setFileMode(QFileDialog.AnyFile)
+    file_dialog.setAcceptMode(QFileDialog.AcceptOpen)
+    if not file_dialog.exec_() == QDialog.Accepted:
+        return None, None
+    files = file_dialog.selectedFiles()
+    settings.setValue(
+        "/UI/lastCsvFileDir",
+        QFileInfo(files[0]).absolutePath()
+    )
+    return (files[0], file_dialog.encoding())
+
+
+def read_csv(filename, file_encoding):
+    """Read entier csv as list of dictionaries"""
+    with open(filename, newline='', encoding=file_encoding) as csvfile:
+        reader = csv.DictReader(csvfile)
+        data = []
+        for row in reader:
+            data.append(row)
+
+        return data
 
 
 def save_dialog_geo(filtering="ESRI Shapefile (*.shp *.SHP)"):

@@ -30,12 +30,12 @@ from multiprocessing.pool import ThreadPool
 from PyQt5 import uic
 from PyQt5.QtWidgets import QMessageBox, QDialog
 from qgis.core import (  # pylint: disable = no-name-in-module
-    QgsMapLayerProxyModel, QgsFieldProxyModel, QgsMessageLog,
+    QgsMapLayerProxyModel, QgsMessageLog,
     QgsCoordinateTransform, QgsFeature, QgsCoordinateReferenceSystem,
     QgsProject, QgsVectorLayer, QgsVectorFileWriter,
     QgsCoordinateTransformContext, Qgis
 )
-from .osrm_utils import decode_geom, save_dialog_geo
+from .osrm_utils import decode_geom, save_dialog_geo, open_dialog, read_csv
 from .template_osrm import TemplateOsrm
 
 
@@ -58,28 +58,19 @@ class OSRMBatchRouteDialog(QDialog, FORM_CLASS_BATCH_ROUTE, TemplateOsrm):
         self.iface = iface
         self.ComboBoxOrigin.setFilters(QgsMapLayerProxyModel.PointLayer)
         self.ComboBoxDestination.setFilters(QgsMapLayerProxyModel.PointLayer)
-        self.ComboBoxCsv.setFilters(QgsMapLayerProxyModel.NoGeometry)
-        field_filters = (
-            QgsFieldProxyModel.Double | QgsFieldProxyModel.Int |
-            QgsFieldProxyModel.LongLong | QgsFieldProxyModel.Numeric |
-            QgsFieldProxyModel.String
-        )
-        self.FieldOriginX.setFilters(field_filters)
-        self.FieldOriginY.setFilters(field_filters)
-        self.FieldDestinationX.setFilters(field_filters)
-        self.FieldDestinationY.setFilters(field_filters)
         self.pushButtonReverse.clicked.connect(
             self.reverse_origin_destination_batch)
         self.pushButtonBrowse.clicked.connect(self.output_dialog_geo)
+        self.pushButtonCsv.clicked.connect(self.input_dialog_csv)
         self.pushButtonRun.clicked.connect(self.get_batch_route)
         self.pushButtonClear.clicked.connect(self.clear_all_routes)
         self.comboBox_method.activated[str].connect(self.enable_functionnality)
-        self.ComboBoxCsv.layerChanged.connect(self._set_layer_field_combo)
         self.nb_route = 0
         self.nb_done = 0
         self.errors = 0
         self.filename = None
         self.encoding = None
+        self.csv_data = None
         self.load_providers()
 
     def clear_all_routes(self):
@@ -96,13 +87,6 @@ class OSRMBatchRouteDialog(QDialog, FORM_CLASS_BATCH_ROUTE, TemplateOsrm):
         if needs_repaint:
             self.repaint_layers()
 
-    def _set_layer_field_combo(self, layer):
-        """Sets layer for field oridin and destination coordinates"""
-        self.FieldOriginX.setLayer(layer)
-        self.FieldOriginY.setLayer(layer)
-        self.FieldDestinationX.setLayer(layer)
-        self.FieldDestinationY.setLayer(layer)
-
     def output_dialog_geo(self):
         """Manages dialog for setting output filename"""
         self.lineEdit_output.clear()
@@ -111,29 +95,65 @@ class OSRMBatchRouteDialog(QDialog, FORM_CLASS_BATCH_ROUTE, TemplateOsrm):
             return
         self.lineEdit_output.setText(self.filename)
 
+    def input_dialog_csv(self):
+        """Manages dialog for setting input filename"""
+        self.lineEdit_csv.setText("")
+        self.FieldOriginX.clear()
+        self.FieldOriginY.clear()
+        self.FieldDestinationX.clear()
+        self.FieldDestinationY.clear()
+        self.filename, self.encoding = open_dialog()
+        if self.filename is None:
+            return 0
+
+        try:
+            self.csv_data = read_csv(self.filename, self.encoding)
+
+            if len(self.csv_data) > 0:
+                columns = list(self.csv_data[0].keys())
+                self.FieldOriginX.addItems(columns)
+                self.FieldOriginY.addItems(columns)
+                self.FieldDestinationX.addItems(columns)
+                self.FieldDestinationY.addItems(columns)
+            self.lineEdit_csv.setText(self.filename)
+
+            return 0
+        except Exception as err:
+            QMessageBox.information(
+                self.iface.mainWindow(), 'Error',
+                "Something went wrong...(See Qgis log for traceback)")
+            QgsMessageLog.logMessage(
+                f"OSRM-plugin error report :\n {str(err)}",
+                level=Qgis.Warning)
+            return -1
+
     def enable_functionnality(self, text):
         """Load preset functionality groups according to text parameter"""
         functions = (
             self.ComboBoxOrigin.setEnabled, self.label_2.setEnabled,
             self.ComboBoxDestination.setEnabled, self.label.setEnabled,
-            self.label_5.setEnabled, self.ComboBoxCsv.setEnabled,
+            self.label_5.setEnabled, self.pushButtonCsv.setEnabled,
             self.FieldOriginX.setEnabled, self.FieldOriginY.setEnabled,
             self.FieldDestinationX.setEnabled, self.label_6.setEnabled,
             self.FieldDestinationY.setEnabled, self.label_7.setEnabled,
-            self.label_8.setEnabled, self.label_9.setEnabled
+            self.label_8.setEnabled, self.label_9.setEnabled,
+            self.lineEdit_csv.setEnabled
         )
         if 'layer' in text:
             values = (True, True, True, True,
                       False, False, False, False, False,
-                      False, False, False, False, False)
+                      False, False, False, False, False,
+                      False)
         elif '.csv' in text:
             values = (False, False, False, False,
                       True, True, True, True, True,
-                      True, True, True, True, True)
+                      True, True, True, True, True,
+                      True)
         elif 'method' in text:
             values = (False, False, False, False,
                       False, False, False, False, False,
-                      False, False, False, False, False)
+                      False, False, False, False, False,
+                      False)
         else:
             return
         for func, bool_value in zip(functions, values):
@@ -183,16 +203,15 @@ class OSRMBatchRouteDialog(QDialog, FORM_CLASS_BATCH_ROUTE, TemplateOsrm):
                     for dest in destination_ids_coords]
 
         if self.FieldOriginX.isEnabled():
-            # If the source file is a .csv :
-            # layer = self.ComboBoxCsv.currentLayer()
-            # xo_col = self.FieldOriginX.currentField()
-            # yo_col = self.FieldOriginY.currentField()
-            # xd_col = self.FieldDestinationX.currentField()
-            # yd_col = self.FieldDestinationY.currentField()
-            # return [(str(ft.attribute(yo_col)), str(ft.attribute(xo_col)),
-            #         str(ft.attribute(yd_col)), str(ft.attribute(xd_col)))
-            #        for ft in layer.getFeatures()]
-            return []
+            fox = self.FieldOriginX.currentText()
+            foy = self.FieldOriginY.currentText()
+            fdx = self.FieldDestinationX.currentText()
+            fdy = self.FieldDestinationY.currentText()
+            queries = []
+            for row in self.csv_data:
+                queries.append([row[foy], row[fox], row[fdy], row[fdx]])
+
+            return queries
 
         return -1
 
@@ -209,14 +228,14 @@ class OSRMBatchRouteDialog(QDialog, FORM_CLASS_BATCH_ROUTE, TemplateOsrm):
     def switch_origin_destination_fields(self):
         """ Switch the selected fields from the csv file"""
         try:
-            oxf = self.FieldOriginX.currentField()
-            self.FieldOriginX.setField(
-                self.FieldDestinationX.currentField())
-            oyf = self.FieldOriginY.currentField()
-            self.FieldOriginY.setField(
-                self.FieldDestinationY.currentField())
-            self.FieldDestinationX.setField(oxf)
-            self.FieldDestinationY.setField(oyf)
+            oxf = self.FieldOriginX.currentIndex()
+            self.FieldOriginX.setCurrentIndex(
+                self.FieldDestinationX.currentIndex())
+            oyf = self.FieldOriginY.currentIndex()
+            self.FieldOriginY.setCurrentIndex(
+                self.FieldDestinationY.currentIndex())
+            self.FieldDestinationX.setCurrentIndex(oxf)
+            self.FieldDestinationY.setCurrentIndex(oyf)
         except Exception as err:
             QgsMessageLog.logMessage(
                 f"OSRM-plugin error report :\n {str(err)}",

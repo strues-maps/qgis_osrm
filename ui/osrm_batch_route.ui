@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>448</width>
-    <height>579</height>
+    <height>619</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <property name="geometry">
     <rect>
      <x>11</x>
-     <y>530</y>
+     <y>565</y>
      <width>85</width>
      <height>27</height>
     </rect>
@@ -35,7 +35,7 @@
    <property name="geometry">
     <rect>
      <x>335</x>
-     <y>530</y>
+     <y>565</y>
      <width>101</width>
      <height>27</height>
     </rect>
@@ -52,58 +52,6 @@
     <set>QDialogButtonBox::Close</set>
    </property>
   </widget>
-  <widget class="QgsFieldComboBox" name="FieldOriginX">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
-   <property name="geometry">
-    <rect>
-     <x>150</x>
-     <y>224</y>
-     <width>131</width>
-     <height>31</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QgsFieldComboBox" name="FieldOriginY">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
-   <property name="geometry">
-    <rect>
-     <x>150</x>
-     <y>264</y>
-     <width>131</width>
-     <height>31</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QgsFieldComboBox" name="FieldDestinationX">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
-   <property name="geometry">
-    <rect>
-     <x>300</x>
-     <y>224</y>
-     <width>131</width>
-     <height>31</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QgsFieldComboBox" name="FieldDestinationY">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
-   <property name="geometry">
-    <rect>
-     <x>300</x>
-     <y>264</y>
-     <width>131</width>
-     <height>31</height>
-    </rect>
-   </property>
-  </widget>
   <widget class="QLabel" name="label_7">
    <property name="enabled">
     <bool>false</bool>
@@ -111,7 +59,7 @@
    <property name="geometry">
     <rect>
      <x>305</x>
-     <y>204</y>
+     <y>239</y>
      <width>131</width>
      <height>20</height>
     </rect>
@@ -136,7 +84,7 @@
    <property name="geometry">
     <rect>
      <x>30</x>
-     <y>228</y>
+     <y>263</y>
      <width>81</width>
      <height>20</height>
     </rect>
@@ -161,7 +109,7 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>294</y>
+     <y>340</y>
      <width>431</width>
      <height>20</height>
     </rect>
@@ -194,10 +142,11 @@
    </property>
    <property name="font">
     <font>
+     <family>Arial</family>
      <pointsize>10</pointsize>
-     <weight>75</weight>
-     <italic>true</italic>
-     <bold>true</bold>
+     <weight>50</weight>
+     <italic>false</italic>
+     <bold>false</bold>
     </font>
    </property>
    <item>
@@ -264,19 +213,6 @@
     <string>Select Provider:</string>
    </property>
   </widget>
-  <widget class="QgsMapLayerComboBox" name="ComboBoxCsv">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
-   <property name="geometry">
-    <rect>
-     <x>150</x>
-     <y>170</y>
-     <width>281</width>
-     <height>27</height>
-    </rect>
-   </property>
-  </widget>
   <widget class="QLabel" name="label_5">
    <property name="enabled">
     <bool>false</bool>
@@ -309,7 +245,7 @@
    <property name="geometry">
     <rect>
      <x>155</x>
-     <y>204</y>
+     <y>239</y>
      <width>131</width>
      <height>20</height>
     </rect>
@@ -334,7 +270,7 @@
    <property name="geometry">
     <rect>
      <x>30</x>
-     <y>270</y>
+     <y>305</y>
      <width>81</width>
      <height>16</height>
     </rect>
@@ -356,7 +292,7 @@
    <property name="geometry">
     <rect>
      <x>110</x>
-     <y>340</y>
+     <y>375</y>
      <width>321</width>
      <height>32</height>
     </rect>
@@ -369,7 +305,7 @@
    <property name="geometry">
     <rect>
      <x>30</x>
-     <y>310</y>
+     <y>345</y>
      <width>391</width>
      <height>33</height>
     </rect>
@@ -387,7 +323,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>340</y>
+     <y>375</y>
      <width>81</width>
      <height>33</height>
     </rect>
@@ -500,7 +436,7 @@
    <property name="geometry">
     <rect>
      <x>110</x>
-     <y>380</y>
+     <y>415</y>
      <width>210</width>
      <height>23</height>
     </rect>
@@ -534,7 +470,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>410</y>
+     <y>445</y>
      <width>411</width>
      <height>30</height>
     </rect>
@@ -560,7 +496,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>480</y>
+     <y>515</y>
      <width>411</width>
      <height>30</height>
     </rect>
@@ -609,7 +545,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>445</y>
+     <y>480</y>
      <width>411</width>
      <height>30</height>
     </rect>
@@ -631,13 +567,109 @@
     <bool>false</bool>
    </property>
   </widget>
+  <widget class="QPushButton" name="pushButtonCsv">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>200</y>
+     <width>121</width>
+     <height>33</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>9</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>Browse</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="lineEdit_csv">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>150</x>
+     <y>200</y>
+     <width>281</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="FieldOriginX">
+   <property name="geometry">
+    <rect>
+     <x>150</x>
+     <y>260</y>
+     <width>131</width>
+     <height>35</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Arial</family>
+     <pointsize>9</pointsize>
+    </font>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="FieldOriginY">
+   <property name="geometry">
+    <rect>
+     <x>150</x>
+     <y>300</y>
+     <width>131</width>
+     <height>35</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Arial</family>
+     <pointsize>9</pointsize>
+    </font>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="FieldDestinationX">
+   <property name="geometry">
+    <rect>
+     <x>300</x>
+     <y>260</y>
+     <width>131</width>
+     <height>35</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Arial</family>
+     <pointsize>9</pointsize>
+    </font>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="FieldDestinationY">
+   <property name="geometry">
+    <rect>
+     <x>300</x>
+     <y>300</y>
+     <width>131</width>
+     <height>35</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Arial</family>
+     <pointsize>9</pointsize>
+    </font>
+   </property>
+  </widget>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>QgsFieldComboBox</class>
-   <extends>QComboBox</extends>
-   <header>qgsfieldcombobox.h</header>
-  </customwidget>
   <customwidget>
    <class>QgsMapLayerComboBox</class>
    <extends>QComboBox</extends>

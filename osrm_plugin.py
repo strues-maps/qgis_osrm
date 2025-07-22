@@ -137,28 +137,32 @@ class OsrmPlugin:
             None,
             text=self.tr('Configure providers'),
             callback=self.run_configure,
-            parent=self.qgis_iface.mainWindow()
+            parent=self.qgis_iface.mainWindow(),
+            add_to_toolbar=False,
         )
 
         self.add_action(
-            ':/plugins/qgis-osrm/img/icon.png',
+            ':/plugins/qgis_osrm/img/icon.png',
             text=self.tr('Find a route with OSRM'),
             callback=self.run_route,
-            parent=self.qgis_iface.mainWindow()
+            parent=self.qgis_iface.mainWindow(),
+            add_to_toolbar=False,
         )
 
         self.add_action(
-            ':/plugins/qgis-osrm/img/icon_table.png',
+            ':/plugins/qgis_osrm/img/icon_table.png',
             text=self.tr('Get a time matrix with OSRM'),
             callback=self.run_table,
             parent=self.qgis_iface.mainWindow(),
+            add_to_toolbar=False,
         )
 
         self.add_action(
-            ':/plugins/qgis-osrm/img/icon_access.png',
+            ':/plugins/qgis_osrm/img/icon_access.png',
             text=self.tr('Make accessibility isochrones with OSRM'),
             callback=self.run_accessibility,
             parent=self.qgis_iface.mainWindow(),
+            add_to_toolbar=False,
         )
 
         self.add_action(

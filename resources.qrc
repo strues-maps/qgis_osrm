@@ -1,5 +1,5 @@
 <RCC>
-    <qresource prefix="/plugins/qgis-osrm" >
+    <qresource prefix="/plugins/qgis_osrm" >
         <file>img/icon.png</file>
         <file>img/icon_table.png</file>
         <file>img/icon_access.png</file>

@@ -1,15 +1,15 @@
 [general]
 name=Routing with OSRM
 qgisMinimumVersion=3.28
-qgisMaximumVersion=3.44
+qgisMaximumVersion=3.99
 description=Display your routing results from OSRM service
-version=1.0.0
+version=1.0.1
 author=strues-maps
 email=info@strues-maps.lt
 about= OSRM (Open Source Routing Machine) plugin for QGIS, allowing to query a local/distant OSRM server API in order to display route(s), draw accessibility isochrones and export time-distance matrix. Requires Python modules numpy, matplotlib, scipy, and shapely.
 experimental=false
 deprecated=false
 tags=Routing, OpenStreetMap, Open Source Routing Machine, OSM, OSRM, Isochrone, Route matching, Route snapping, Route Tables, Traveling Salesman Problem
-homepage=https://github.com/strues-maps/qgis-osrm
-repository=https://github.com/strues-maps/qgis-osrm
-tracker=https://github.com/strues-maps/qgis-osrm/issues
+homepage=https://github.com/strues-maps/qgis_osrm
+repository=https://github.com/strues-maps/qgis_osrm
+tracker=https://github.com/strues-maps/qgis_osrm/issues

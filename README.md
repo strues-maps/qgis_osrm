@@ -1,8 +1,8 @@
-**OSRM Routing plugin for QGIS 3.44**
+**OSRM Routing plugin for QGIS >=3.28**
 
 Routing with OSRM
 =================
-This plugin is available for QGIS version 3.44 and is under active development.
+This plugin is available for QGIS version >=3.28 and is under active development.
 Plugin source code is available at https://github.com/strues-maps/qgis_osrm .
 This plugin is licensed under GNU GPL v2.0 or later.
 

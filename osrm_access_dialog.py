@@ -203,7 +203,7 @@ class OSRMAccessDialog(QDialog, FORM_CLASS_ACCESS_DIALOG_BASE, TemplateOsrm):
         )
 
         self.make_prog_bar()
-        self.max_points = 1500 if len(pts) == 1 else 500
+        self.max_points = 500
         self.polygons = []
 
         pts = [

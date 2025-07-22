@@ -78,6 +78,73 @@ class OSRMDialogTSP(QDialog, FORM_CLASS_DIALOG_TSP, TemplateOsrm):
             self.repaint_layers()
         self.nb_route = 0
 
+    def prep_instruction(self, nb_route, routes_json, alt=None):
+        """
+        Prepare the instruction layer, each field corresponding to an OSRM
+        viaroute response field.
+        """
+        osrm_instruction_layer = QgsVectorLayer(
+            "Point?crs=epsg:4326&field=id:integer&field=alt:integer"
+            "&field=maneuver_bearing_before:integer"
+            "&field=bearing_after:integer"
+            "&field=maneuver_type:string(254)"
+            "&field=maneuver_modifier:string(254)"
+            "&field=maneuver_exit:integer(20)"
+            "&field=street_name:string(254)"
+            "&field=length_m:string(254)&field=route_idx:integer(20)"
+            "&field=time_min:string(254)",
+            f"instruction_tsp_osrm{nb_route}",
+            "memory")
+        provider = osrm_instruction_layer.dataProvider()
+        print(routes_json)
+        nbi = 0
+        features = []
+        for route_idx, route in enumerate(routes_json):
+            for leg in route["legs"]:
+                for step in leg["steps"]:
+                    if "maneuver" not in step:
+                        continue
+                    if "location" not in step["maneuver"]:
+                        continue
+
+                    maneuver = step["maneuver"]
+                    coords = maneuver["location"]
+                    fet = QgsFeature()
+                    pt = QgsPoint(coords[0], coords[1])
+                    fet.setGeometry(QgsGeometry.fromPoint(pt))
+                    fet.setAttributes(
+                        [
+                            nbi,
+                            alt if alt is not None else 0,
+                            maneuver["bearing_before"]
+                            if "bearing_before" in maneuver else None,
+                            maneuver["bearing_after"]
+                            if "bearing_after" in maneuver else None,
+                            step["maneuver"]["type"]
+                            if "type" in maneuver else None,
+                            step["maneuver"]["modifier"]
+                            if "modifier" in maneuver else None,
+                            step["maneuver"]["exit"]
+                            if "exit" in maneuver else None,
+                            step["name"],
+                            step["distance"],
+                            route_idx,
+                            step["duration"] / 60
+                        ]
+                    )
+                    features.append(fet)
+                    nbi += 1
+            if (alt is None) and (route_idx > 0):
+                break
+        provider.addFeatures(features)
+
+        symbol = QgsSymbol.defaultSymbol(osrm_instruction_layer.geometryType())
+        symbol.setSize(2)
+        symbol.setColor(QtGui.QColor("#d9ef8b"))
+        osrm_instruction_layer.setRenderer(QgsSingleSymbolRenderer(symbol))
+
+        return provider, osrm_instruction_layer
+
     def run_tsp(self):
         """
         Main method, preparing the query and displaying the result on
@@ -90,10 +157,15 @@ class OSRMDialogTSP(QDialog, FORM_CLASS_DIALOG_TSP, TemplateOsrm):
         if len(coords) < 2:
             return -1
 
+        steps = str(self.checkBox_instructions.isChecked()).lower()
+
         query = ''.join(
             [
                 self.prepare_request_url(self.base_url, 'trip'),
                 ";".join([f"{c[0]},{c[1]}" for c in coords]),
+                "?",
+                "steps=",
+                steps
             ]
         )
         if self.api_key:
@@ -144,11 +216,18 @@ class OSRMDialogTSP(QDialog, FORM_CLASS_DIALOG_TSP, TemplateOsrm):
         self.iface.setActiveLayer(tsp_route_layer)
         self.iface.zoomToActiveLayer()
         put_on_top(self.tsp_marker_lr.id(), tsp_route_layer.id())
+
+        if self.checkBox_instructions.isChecked():
+            _, instruct_layer = self.prep_instruction(
+                self.nb_route,
+                self.parsed["trips"],
+                False)
+            QgsProject.instance().addMapLayer(instruct_layer)
+            self.iface.setActiveLayer(instruct_layer)
+            put_on_top(instruct_layer.id(), self.tsp_marker_lr.id())
+
         self.nb_route += 1
-#        if self.checkBox_instructions.isChecked():
-#            pr_instruct, instruct_layer = self.prep_instruction()
-#            QgsProject.instance().addMapLayer(instruct_layer)
-#            self.iface.setActiveLayer(instruct_layer)
+
         return 0
 
     def prepare_ordered_marker(self, coords):

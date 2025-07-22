@@ -128,51 +128,85 @@ class OSRMDialog(QDialog, FORM_CLASS_DIALOG_BASE, TemplateOsrm):
         needs_repaint = False
 
         for layer in QgsProject.instance().mapLayers():
-            if 'route_osrm' in layer or 'markers_osrm' in layer:
+            if 'route_osrm' in layer:
+                QgsProject.instance().removeMapLayer(layer)
+                needs_repaint = True
+            if 'markers_osrm' in layer:
+                QgsProject.instance().removeMapLayer(layer)
+                needs_repaint = True
+            if 'instruction_single_osrm' in layer:
                 QgsProject.instance().removeMapLayer(layer)
                 needs_repaint = True
         if needs_repaint:
             self.repaint_layers()
         self.nb_route = 0
 
-    # def prep_instruction(self, alt=None, provider=None,
-    #                      osrm_instruction_layer=None):
-    #     """
-    #     Prepare the instruction layer, each field corresponding to an OSRM
-    #     viaroute response field.
-    #     """
-    #     if not alt:
-    #         osrm_instruction_layer = QgsVectorLayer(
-    #             "Point?crs=epsg:4326&field=id:integer&field=alt:integer"
-    #             "&field=directions:integer(20)&field=street_name:string(254)"
-    #             "&field=length:integer(20)&field=position:integer(20)"
-    #             "&field=time:integer(20)&field=length:string(80)"
-    #             "&field=direction:string(20)&field=azimuth:float(10,4)",
-    #             "instruction_osrm{}".format(self.nb_route),
-    #             "memory")
-    #         liste_coords = decode_geom_to_pts(self.parsed['route_geometry'])
-    #         pts_instruct = pts_ref(self.parsed['route_instructions'])
-    #         instruct = self.parsed['route_instructions']
-    #         provider = osrm_instruction_layer.dataProvider()
-    #     else:
-    #         liste_coords = decode_geom_to_pts(
-    #             self.parsed['alternative_geometries'][alt - 1])
-    #         pts_instruct = pts_ref(
-    #             self.parsed['alternative_instructions'][alt - 1])
-    #         instruct = self.parsed['alternative_instructions'][alt - 1]
-    #
-    #     for nbi, pt in enumerate(pts_instruct):
-    #         fet = QgsFeature()
-    #         fet.setGeometry(
-    #             QgsGeometry.fromPoint(
-    #                 QgsPoint(liste_coords[pt][0], liste_coords[pt][1])))
-    #         fet.setAttributes([nbi, alt, instruct[nbi][0],
-    #                            instruct[nbi][1], instruct[nbi][2],
-    #                            instruct[nbi][3], instruct[nbi][4],
-    #                            instruct[nbi][5], instruct[nbi][6],
-    #                            instruct[nbi][7]])
-    #         provider.addFeatures([fet])
-    #     return provider, osrm_instruction_layer
+    def prep_instruction(self, nb_route, routes_json, alt=None):
+        """
+        Prepare the instruction layer, each field corresponding to an OSRM
+        viaroute response field.
+        """
+        osrm_instruction_layer = QgsVectorLayer(
+            "Point?crs=epsg:4326&field=id:integer&field=alt:integer"
+            "&field=maneuver_bearing_before:integer"
+            "&field=bearing_after:integer"
+            "&field=maneuver_type:string(254)"
+            "&field=maneuver_modifier:string(254)"
+            "&field=maneuver_exit:integer(20)"
+            "&field=street_name:string(254)"
+            "&field=length_m:string(254)&field=route_idx:integer(20)"
+            "&field=time_min:string(254)",
+            f"instruction_single_osrm{nb_route}",
+            "memory")
+        provider = osrm_instruction_layer.dataProvider()
+
+        nbi = 0
+        features = []
+        for route_idx, route in enumerate(routes_json):
+            for leg in route["legs"]:
+                for step in leg["steps"]:
+                    if "maneuver" not in step:
+                        continue
+                    if "location" not in step["maneuver"]:
+                        continue
+
+                    maneuver = step["maneuver"]
+                    coords = maneuver["location"]
+                    fet = QgsFeature()
+                    pt = QgsPoint(coords[0], coords[1])
+                    fet.setGeometry(QgsGeometry.fromPoint(pt))
+                    fet.setAttributes(
+                        [
+                            nbi,
+                            alt if alt is not None else 0,
+                            maneuver["bearing_before"]
+                            if "bearing_before" in maneuver else None,
+                            maneuver["bearing_after"]
+                            if "bearing_after" in maneuver else None,
+                            step["maneuver"]["type"]
+                            if "type" in maneuver else None,
+                            step["maneuver"]["modifier"]
+                            if "modifier" in maneuver else None,
+                            step["maneuver"]["exit"]
+                            if "exit" in maneuver else None,
+                            step["name"],
+                            step["distance"],
+                            route_idx,
+                            step["duration"] / 60
+                        ]
+                    )
+                    features.append(fet)
+                    nbi += 1
+            if (alt is None) and (route_idx > 0):
+                break
+        provider.addFeatures(features)
+
+        symbol = QgsSymbol.defaultSymbol(osrm_instruction_layer.geometryType())
+        symbol.setSize(2)
+        symbol.setColor(QtGui.QColor("#d9ef8b"))
+        osrm_instruction_layer.setRenderer(QgsSingleSymbolRenderer(symbol))
+
+        return provider, osrm_instruction_layer
 
     @staticmethod
     def make_origin_destination_markers(nb, xo, yo, xd, yd, list_coords=None):
@@ -250,6 +284,7 @@ class OSRMDialog(QDialog, FORM_CLASS_DIALOG_BASE, TemplateOsrm):
             return -1
 
         alternative = str(self.checkBox_alternative.isChecked()).lower()
+        steps = str(self.checkBox_instructions.isChecked()).lower()
 
         if interm:
             try:
@@ -259,7 +294,7 @@ class OSRMDialog(QDialog, FORM_CLASS_DIALOG_BASE, TemplateOsrm):
                 url = ''.join([
                     self.prepare_request_url(self.base_url, 'route'),
                     f"{xo},{yo};", tmp, f";{xd},{yd}",
-                    f"?overview=full&alternatives={alternative}"
+                    f"?overview=full&alternatives={alternative}&steps={steps}"
                 ])
             except AssertionError:
                 self.iface.messageBar().pushMessage(
@@ -272,7 +307,7 @@ class OSRMDialog(QDialog, FORM_CLASS_DIALOG_BASE, TemplateOsrm):
             url = ''.join([
                 self.prepare_request_url(self.base_url, 'route'),
                 "polyline(", encode_to_polyline([(yo, xo), (yd, xd)]), ")",
-                f"?overview=full&alternatives={alternative}"
+                f"?overview=full&alternatives={alternative}&steps={steps}"
             ])
 
         if self.api_key:
@@ -312,12 +347,24 @@ class OSRMDialog(QDialog, FORM_CLASS_DIALOG_BASE, TemplateOsrm):
             f"route_osrm{self.nb_route}", "memory")
         my_symb = prepare_route_symbol(self.nb_route)
         osrm_route_layer.setRenderer(QgsSingleSymbolRenderer(my_symb))
+
         provider = osrm_route_layer.dataProvider()
-        fet = QgsFeature()
-        fet.setGeometry(line_geom)
-        fet.setAttributes([0, self.parsed['routes'][0]['duration'],
-                           self.parsed['routes'][0]['distance']])
-        provider.addFeatures([fet])
+        features = []
+        for i, route in enumerate(self.parsed["routes"]):
+            enc_line = route["geometry"]
+            line_geom = decode_geom(enc_line)
+            fet = QgsFeature()
+            fet.setGeometry(line_geom)
+            fet.setAttributes([
+                i,
+                route["duration"],
+                route["distance"]
+            ])
+            features.append(fet)
+            if not self.checkBox_alternative.isChecked():
+                break
+        provider.addFeatures(features)
+
         origin_destination_layer = self.make_origin_destination_markers(
             self.nb_route,
             xo,
@@ -332,19 +379,15 @@ class OSRMDialog(QDialog, FORM_CLASS_DIALOG_BASE, TemplateOsrm):
         QgsProject.instance().addMapLayer(osrm_route_layer)
         self.iface.setActiveLayer(osrm_route_layer)
         self.iface.zoomToActiveLayer()
-        put_on_top(origin_destination_layer.id(), osrm_route_layer.id())
-#        if self.checkBox_instruction.isChecked():
-#            pr_instruct, instruct_layer = self.prep_instruction()
-#            QgsProject.instance().addMapLayer(instruct_layer)
-#            self.iface.setActiveLayer(instruct_layer)
 
-        if self.checkBox_alternative.isChecked() \
-                and 'alternative_geometries' in self.parsed:
-            self.nb_alternative = len(self.parsed['routes'] - 1)
-            self.get_alternatives(provider)
-#            if self.dlg.checkBox_instruction.isChecked():
-#                for i in range(self.nb_alternative):
-#                    pr_instruct, instruct_layer = \
-#                       self.prep_instruction(
-#                           i + 1, pr_instruct, instruct_layer)
+        put_on_top(origin_destination_layer.id(), osrm_route_layer.id())
+
+        if self.checkBox_instructions.isChecked():
+            _, instruct_layer = self.prep_instruction(
+                self.nb_route,
+                self.parsed["routes"],
+                self.checkBox_alternative.isChecked())
+            QgsProject.instance().addMapLayer(instruct_layer)
+            self.iface.setActiveLayer(instruct_layer)
+            put_on_top(instruct_layer.id(), origin_destination_layer.id())
         return 0

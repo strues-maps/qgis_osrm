@@ -169,7 +169,7 @@ class OSRMDialogTSP(QDialog, FORM_CLASS_DIALOG_TSP, TemplateOsrm):
             ]
         )
         if self.api_key:
-            query = ''.join([query, '?api_key=', self.api_key])
+            query = ''.join([query, '&api_key=', self.api_key])
         print(f"Fetch traveling salesman query: {query}")
 
         try:

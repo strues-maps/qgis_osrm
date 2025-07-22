@@ -30,7 +30,7 @@ from PyQt5 import QtGui, uic
 from PyQt5.QtGui import QFont, QColor
 from PyQt5.QtWidgets import QDialog
 from qgis.core import (  # pylint: disable = no-name-in-module
-    QgsMapLayerProxyModel, QgsPoint, QgsProject, QgsVectorLayer,
+    QgsMapLayerProxyModel, QgsPointXY, QgsProject, QgsVectorLayer,
     QgsSymbol, QgsFeature, QgsGeometry, QgsPalLayerSettings, Qgis,
     QgsSingleSymbolRenderer, QgsMessageLog, QgsTextFormat,
     QgsTextBufferSettings, QgsVectorLayerSimpleLabeling
@@ -99,7 +99,7 @@ class OSRMDialogTSP(QDialog, FORM_CLASS_DIALOG_TSP, TemplateOsrm):
             f"instruction_tsp_osrm{nb_route}",
             "memory")
         provider = osrm_instruction_layer.dataProvider()
-        print(routes_json)
+
         nbi = 0
         features = []
         for route_idx, route in enumerate(routes_json):
@@ -113,8 +113,8 @@ class OSRMDialogTSP(QDialog, FORM_CLASS_DIALOG_TSP, TemplateOsrm):
                     maneuver = step["maneuver"]
                     coords = maneuver["location"]
                     fet = QgsFeature()
-                    pt = QgsPoint(coords[0], coords[1])
-                    fet.setGeometry(QgsGeometry.fromPoint(pt))
+                    pt = QgsPointXY(coords[0], coords[1])
+                    fet.setGeometry(QgsGeometry.fromPointXY(pt))
                     fet.setAttributes(
                         [
                             nbi,
@@ -255,7 +255,7 @@ class OSRMDialogTSP(QDialog, FORM_CLASS_DIALOG_TSP, TemplateOsrm):
             pt = coords[i]
 
             ft = QgsFeature()
-            ft.setGeometry(QgsGeometry.fromPoint(QgsPoint(pt)))
+            ft.setGeometry(QgsGeometry.fromPointXY(QgsPointXY(pt)))
             ft.setAttributes([trip_idx, trip_idx + 1, i])
             features.append(ft)
 

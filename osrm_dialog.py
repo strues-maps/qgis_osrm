@@ -31,7 +31,7 @@ from PyQt5 import QtGui, uic
 from PyQt5.QtWidgets import QDialog
 from qgis.gui import QgsMapToolEmitPoint  # pylint: disable = no-name-in-module
 from qgis.core import (  # pylint: disable = no-name-in-module
-    QgsFeature, QgsProject, QgsVectorLayer, QgsPoint,
+    QgsFeature, QgsProject, QgsVectorLayer, QgsPointXY,
     QgsGeometry, QgsRuleBasedRenderer, QgsSymbol, QgsSingleSymbolRenderer
 )
 from .osrm_utils import (
@@ -173,8 +173,8 @@ class OSRMDialog(QDialog, FORM_CLASS_DIALOG_BASE, TemplateOsrm):
                     maneuver = step["maneuver"]
                     coords = maneuver["location"]
                     fet = QgsFeature()
-                    pt = QgsPoint(coords[0], coords[1])
-                    fet.setGeometry(QgsGeometry.fromPoint(pt))
+                    pt = QgsPointXY(coords[0], coords[1])
+                    fet.setGeometry(QgsGeometry.fromPointXY(pt))
                     fet.setAttributes(
                         [
                             nbi,
@@ -219,11 +219,15 @@ class OSRMDialog(QDialog, FORM_CLASS_DIALOG_BASE, TemplateOsrm):
             f"markers_osrm{nb}", "memory")
         features = []
         fet = QgsFeature()
-        fet.setGeometry(QgsGeometry.fromPoint(QgsPoint(float(xo), float(yo))))
+        fet.setGeometry(
+            QgsGeometry.fromPointXY(QgsPointXY(float(xo), float(yo)))
+        )
         fet.setAttributes([nb, 'Origin'])
         features.append(fet)
         fet = QgsFeature()
-        fet.setGeometry(QgsGeometry.fromPoint(QgsPoint(float(xd), float(yd))))
+        fet.setGeometry(
+            QgsGeometry.fromPointXY(QgsPointXY(float(xd), float(yd)))
+        )
         fet.setAttributes([nb, 'Destination'])
         features.append(fet)
         marker_rules = [
@@ -234,7 +238,9 @@ class OSRMDialog(QDialog, FORM_CLASS_DIALOG_BASE, TemplateOsrm):
             for i, pt in enumerate(list_coords):
                 fet = QgsFeature()
                 fet.setGeometry(
-                    QgsGeometry.fromPoint(QgsPoint(float(pt[0]), float(pt[1])))
+                    QgsGeometry.fromPointXY(
+                        QgsPointXY(float(pt[0]), float(pt[1]))
+                    )
                 )
                 fet.setAttributes([nb, f"Via point n°{i}"])
                 features.append(fet)

@@ -37,7 +37,7 @@ from PyQt5.QtCore import QSettings, QFileInfo
 from PyQt5.QtWidgets import QFileDialog, QDialog
 from qgis.core import (  # pylint: disable = no-name-in-module
     QgsGeometry, QgsPointXY, QgsCoordinateReferenceSystem,
-    QgsProject, QgsCoordinateTransform, QgsSymbol, Qgis,
+    QgsProject, QgsCoordinateTransform, QgsSymbol,
     QgsCoordinateTransformContext, QgsPoint
 )
 from qgis.gui import (  # pylint: disable = no-name-in-module
@@ -46,6 +46,7 @@ from qgis.gui import (  # pylint: disable = no-name-in-module
 from matplotlib import use as matplotlib_use
 from matplotlib.pyplot import contourf
 from scipy.interpolate import griddata
+from .osrm_polyfill import Qgis_GeometryType_Line
 from .osrm_utils_polylline_codec import PolylineCodec
 
 __all__ = ['save_dialog', 'save_dialog_geo', 'prep_access',
@@ -203,7 +204,7 @@ def prepare_route_symbol(nb_route):
     colors = ['#1f78b4', '#ffff01', '#ff7f00',
               '#fb9a99', '#b2df8a', '#e31a1c']
     p = nb_route % len(colors)
-    my_symb = QgsSymbol.defaultSymbol(Qgis.GeometryType.Line)
+    my_symb = QgsSymbol.defaultSymbol(Qgis_GeometryType_Line())
     my_symb.setColor(QColor(colors[p]))
     my_symb.setWidth(1.2)
     return my_symb
@@ -392,7 +393,6 @@ def fetch_table(url, api_key, coords_src, coords_dest, metrics='Durations'):
     try:
         with urlopen(query) as res:
             content = res.read()
-            print(content)
             parsed_json = json.loads(content, strict=False)
             assert parsed_json["code"] == "Ok"
             assert metrics in parsed_json
@@ -473,6 +473,7 @@ def make_regular_points(bounds, nb_pts):
     for x in prog_x:
         for y in prog_y:
             result.append((x, y))
+    print(result)
     return result
 
 

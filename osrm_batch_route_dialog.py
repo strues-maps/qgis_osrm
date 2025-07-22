@@ -24,6 +24,7 @@
  ***************************************************************************/
 """
 
+from re import match
 import os
 from urllib.error import URLError, HTTPError, ContentTooShortError
 from multiprocessing.pool import ThreadPool
@@ -209,8 +210,15 @@ class OSRMBatchRouteDialog(QDialog, FORM_CLASS_BATCH_ROUTE, TemplateOsrm):
             fdy = self.FieldDestinationY.currentText()
             queries = []
             for row in self.csv_data:
+                if match(r'^-?\d+(?:\.\d+)$', row[foy]) is None:
+                    continue
+                if match(r'^-?\d+(?:\.\d+)$', row[fox]) is None:
+                    continue
+                if match(r'^-?\d+(?:\.\d+)$', row[fdy]) is None:
+                    continue
+                if match(r'^-?\d+(?:\.\d+)$', row[fdx]) is None:
+                    continue
                 queries.append([row[foy], row[fox], row[fdy], row[fdx]])
-
             return queries
 
         return -1

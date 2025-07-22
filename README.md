@@ -11,8 +11,13 @@ QGIS2 by Matthieu Viry. QGIS2 plugin was available at https://github.com/mthh/os
 
 TODO
 ====
-- support QGIS 3.28 - 3.44;
 - write units tests
+
+PREPARE RUNTIME ENVIRONMENT
+===============================
+```
+sudo apt install install python3-scipy
+```
 
 PREPARE DEVELOPMENT ENVIRONMENT
 ===============================

@@ -1,6 +1,6 @@
 [general]
 name=Routing with OSRM
-qgisMinimumVersion=3.44
+qgisMinimumVersion=3.28
 qgisMaximumVersion=3.44
 description=Display your routing results from OSRM service
 version=1.0.0

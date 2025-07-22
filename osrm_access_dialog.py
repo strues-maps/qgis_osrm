@@ -32,12 +32,13 @@ from PyQt5 import QtGui, uic
 from PyQt5.QtWidgets import QMessageBox, QDialog
 from qgis.gui import QgsMapToolEmitPoint  # pylint: disable = no-name-in-module
 from qgis.core import (  # pylint: disable = no-name-in-module
-    QgsMapLayerProxyModel, QgsFeature, QgsProject, QgsPoint,
+    QgsMapLayerProxyModel, QgsFeature, QgsProject, QgsPointXY,
     QgsGeometry, QgsSymbol, QgsGraduatedSymbolRenderer,
-    QgsVectorLayer, QgsRendererRange, QgsFillSymbol, Qgis,
+    QgsVectorLayer, QgsRendererRange, QgsFillSymbol,
     QgsSingleSymbolRenderer
 )
 from .osrm_utils import get_isochrones_colors, prep_access, get_coords_ids
+from .osrm_polyfill import Qgis_GeometryType_Point
 from .template_osrm import TemplateOsrm
 
 
@@ -111,6 +112,7 @@ class OSRMAccessDialog(QDialog, FORM_CLASS_ACCESS_DIALOG_BASE, TemplateOsrm):
         Clear previously done isochrone polygons and clear the coordinate field
         """
         self.lineEdit_xyO.setText('')
+        self.intermediate = []
         self.nb_isocr = 0
         needs_repaint = False
         for layer in QgsProject.instance().mapLayers():
@@ -151,7 +153,7 @@ class OSRMAccessDialog(QDialog, FORM_CLASS_ACCESS_DIALOG_BASE, TemplateOsrm):
             f"isochrone_center_{self.nb_isocr}",
             "memory"
         )
-        my_symb = QgsSymbol.defaultSymbol(Qgis.GeometryType.Point)
+        my_symb = QgsSymbol.defaultSymbol(Qgis_GeometryType_Point())
         my_symb.setColor(QtGui.QColor("#e31a1c"))
         my_symb.setSize(1.2)
         center_pt_layer.setRenderer(QgsSingleSymbolRenderer(my_symb))
@@ -159,8 +161,8 @@ class OSRMAccessDialog(QDialog, FORM_CLASS_ACCESS_DIALOG_BASE, TemplateOsrm):
         for nb, pt in enumerate(pts):
             xo, yo = pt["point"]
             fet = QgsFeature()
-            fet.setGeometry(QgsGeometry.fromPoint(
-                QgsPoint(float(xo), float(yo))))
+            fet.setGeometry(QgsGeometry.fromPointXY(
+                QgsPointXY(float(xo), float(yo))))
             fet.setAttributes([nb, 'Origin'])
             features.append(fet)
         center_pt_layer.dataProvider().addFeatures(features)
@@ -178,7 +180,7 @@ class OSRMAccessDialog(QDialog, FORM_CLASS_ACCESS_DIALOG_BASE, TemplateOsrm):
         - render the polygon.
         """
         if 'clicking' in self.comboBox_method.currentText():
-            pts = self.get_points_from_canvas()
+            pts = self.intermediate
         elif 'selecting' in self.comboBox_method.currentText():
             layer = self.comboBox_pointlayer.currentLayer()
             pts, _ = get_coords_ids(

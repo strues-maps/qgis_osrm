@@ -74,6 +74,9 @@ class OSRMDialogTSP(QDialog, FORM_CLASS_DIALOG_TSP, TemplateOsrm):
             if 'tsp_markers_osrm' in layer:
                 QgsProject.instance().removeMapLayer(layer)
                 needs_repaint = True
+            if 'instruction_tsp_osrm' in layer:
+                QgsProject.instance().removeMapLayer(layer)
+                needs_repaint = True
         if needs_repaint:
             self.repaint_layers()
         self.nb_route = 0

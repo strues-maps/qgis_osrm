@@ -144,6 +144,8 @@ def open_dialog(filtering="CSV (*.csv *.CSV)"):
     settings = QSettings()
     dir_name = settings.value("/UI/lastCsvFileDir")
     encode = settings.value("/UI/encoding")
+    encode = 'utf-8' if encode == 'System' else encode
+
     file_dialog = QgsEncodingFileDialog(
         None, "Choose input csv", dir_name, filtering, encode
         )

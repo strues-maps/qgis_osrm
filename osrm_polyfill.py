@@ -26,17 +26,33 @@
 
 
 from qgis.core import (  # pylint: disable=no-name-in-module
-    QgsExpressionContextUtils
+    QgsExpressionContextUtils, QgsPointXY, QgsGeometry
 )
+import matplotlib
 
 
-def qgis_version_less_than(v):
-    """Compare current QGIS version with one provided as parameter"""
-    version = QgsExpressionContextUtils.globalScope().variable('qgis_version')
-    current_major, current_minor = version.split('.')[0:2]
-    ref_major, ref_minor = v.split('.')[0:2]
+def is_version_less_than(current, reference):
+    """Compare two versions"""
+    current_major, current_minor = current.split('.')[0:2]
+    current_major = int(current_major)
+    current_minor = int(current_minor)
+    ref_major, ref_minor = reference.split('.')[0:2]
+    ref_major = int(ref_major)
+    ref_minor = int(ref_minor)
 
     return (current_major, current_minor) < (ref_major, ref_minor)
+
+
+def qgis_version_less_than(reference):
+    """Compare current QGIS version with one provided as parameter"""
+    current = QgsExpressionContextUtils.globalScope().variable('qgis_version')
+    return is_version_less_than(current, reference)
+
+
+def matplotlib_version_less_than(reference):
+    """Compare current QGIS version with one provided as parameter"""
+    current = matplotlib.__version__
+    return is_version_less_than(current, reference)
 
 
 def Qgis_GeometryType_Line():  # pylint: disable=invalid-name
@@ -55,3 +71,35 @@ def Qgis_GeometryType_Point():  # pylint: disable=invalid-name
 
     from qgis.core import Qgis  # pylint: disable=no-name-in-module
     return Qgis.GeometryType.Point
+
+
+def qgsgeom_from_mpl_contour(contour_set):
+    """Convert MatPlotLib polygons to QgsGeometry polygons"""
+    if matplotlib_version_less_than('3.9'):
+        polygons = []
+        for path_collection in contour_set.collections:
+            mpoly = []
+            for path in path_collection.get_paths():
+                path.should_simplify = False
+                poly = path.to_polygons()
+                if len(poly) > 0 and len(poly[0]) > 3:
+                    exterior = [QgsPointXY(*p.tolist()) for p in poly[0]]
+                    mpoly.append([exterior])
+            if len(mpoly) == 1:
+                polygons.append(QgsGeometry.fromPolygonXY(mpoly[0]))
+            else:
+                polygons.append(QgsGeometry.fromPolygonXY([]))
+    else:
+        polygons = []
+        for path in contour_set.get_paths():
+            mpoly = []
+            path.should_simplify = False
+            poly = path.to_polygons()
+            if len(poly) > 0 and len(poly[0]) > 3:
+                exterior = [QgsPointXY(*p.tolist()) for p in poly[0]]
+                mpoly = [exterior]
+            if len(mpoly) == 1:
+                polygons.append(QgsGeometry.fromPolygonXY(mpoly))
+            else:
+                polygons.append(QgsGeometry.fromPolygonXY([]))
+    return polygons

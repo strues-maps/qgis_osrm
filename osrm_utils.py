@@ -47,10 +47,11 @@ from matplotlib import use as matplotlib_use
 from matplotlib.pyplot import contourf
 from scipy.interpolate import griddata
 from .osrm_polyfill import Qgis_GeometryType_Line
+from .osrm_polyfill import qgsgeom_from_mpl_contour
 from .osrm_utils_polylline_codec import PolylineCodec
 
 __all__ = ['save_dialog', 'save_dialog_geo', 'prep_access',
-           'qgsgeom_from_mpl_collec', 'prepare_route_symbol',
+           'prepare_route_symbol',
            'encode_to_polyline', 'interpolate_from_times', 'get_coords_ids',
            'pts_ref', "put_on_top", 'decode_geom', 'fetch_table',
            'decode_geom_to_pts', 'fetch_nearest',
@@ -110,11 +111,11 @@ def prep_access(time_param):
     times = (times[0] / 60.0).round(2)  # Round values in minutes
 
     # Fetch MatPlotLib polygons from a griddata interpolation
-    collec_poly = interpolate_from_times(
+    contour_set = interpolate_from_times(
         times, np.array(snapped_dest_coords), levels)
 
     # Convert MatPlotLib polygons to QgsGeometry polygons :
-    polygons = qgsgeom_from_mpl_collec(collec_poly.collections)
+    polygons = qgsgeom_from_mpl_contour(contour_set)
 
     return polygons
 
@@ -210,33 +211,6 @@ def prepare_route_symbol(nb_route):
     return my_symb
 
 
-def qgsgeom_from_mpl_collec(collections):
-    """Convert MatPlotLib polygons to QgsGeometry polygons"""
-    polygons = []
-    for path_collection in collections:
-        mpoly = []
-        for path in path_collection.get_paths():
-            path.should_simplify = False
-            poly = path.to_polygons()
-            if len(poly) > 0 and len(poly[0]) > 3:
-                exterior = [QgsPointXY(*p.tolist()) for p in poly[0]]
-                holes = [[QgsPointXY(*p.tolist()) for p in h]
-                         for h in poly[1:] if len(h) > 3]
-                if len(holes) >= 1:
-                    mpoly.append([exterior, holes[0]])
-                elif len(holes) > 1:
-                    mpoly.append([exterior] + [holes])
-                else:
-                    mpoly.append([exterior])
-        if len(mpoly) == 1:
-            polygons.append(QgsGeometry.fromPolygonXY(mpoly[0]))
-        elif len(mpoly) > 1:
-            polygons.append(QgsGeometry.fromMultiPolygonXY(mpoly))
-        else:
-            polygons.append(QgsGeometry.fromPolygonXY([]))
-    return polygons
-
-
 def interpolate_from_times(times, coords, levels, rev_coords=False):
     """Interpolate polygons from route times and coordinates"""
     if not rev_coords:
@@ -251,9 +225,9 @@ def interpolate_from_times(times, coords, levels, rev_coords=False):
 
     zi = griddata(coords, times, (x_grid, y_grid), method='linear')
     v_bnd = np.nanmax(abs(zi))
-    collec_poly = contourf(xi, yi, zi, levels, vmax=v_bnd, vmin=-v_bnd)
+    contour_set = contourf(xi, yi, zi, levels, vmax=v_bnd, vmin=-v_bnd)
 
-    return collec_poly
+    return contour_set
 
 
 def get_coords_ids(layer, field, on_selected=False):

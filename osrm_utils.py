@@ -473,7 +473,6 @@ def make_regular_points(bounds, nb_pts):
     for x in prog_x:
         for y in prog_y:
             result.append((x, y))
-    print(result)
     return result
 
 

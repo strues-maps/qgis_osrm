@@ -37,7 +37,10 @@ from qgis.core import (  # pylint: disable = no-name-in-module
     QgsVectorLayer, QgsRendererRange, QgsFillSymbol,
     QgsSingleSymbolRenderer
 )
-from .osrm_utils import get_isochrones_colors, prep_access, get_coords_ids
+from .osrm_utils import (
+   get_isochrones_colors, prep_access_parsed, get_coords_ids,
+   interpolate_from_times, qgsgeom_from_mpl_contour
+)
 from .osrm_polyfill import Qgis_GeometryType_Point
 from .template_osrm import TemplateOsrm
 
@@ -220,10 +223,21 @@ class OSRMAccessDialog(QDialog, FORM_CLASS_ACCESS_DIALOG_BASE, TemplateOsrm):
 
         pool = ThreadPool(processes=4 if len(pts) >= 4 else len(pts))
         self.progress.setValue(5)
+        self.polygons = []
 
         try:
-            self.polygons = list(pool.map(prep_access, pts))
+            responses = list(pool.map(prep_access_parsed, pts))
             pool.close()
+
+            for response in responses:
+                times, snapped_dest_coords, levels = response
+                # Fetch MatPlotLib polygons from a griddata interpolation
+                contour_set = interpolate_from_times(
+                    times, np.array(snapped_dest_coords), levels)
+
+                # Convert MatPlotLib polygons to QgsGeometry polygons :
+                self.polygons.append(qgsgeom_from_mpl_contour(contour_set))
+
         except ValueError as err:
             self.display_error(err, 1)
             pool.close()

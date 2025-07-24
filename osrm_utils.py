@@ -51,7 +51,7 @@ from .osrm_polyfill import qgsgeom_from_mpl_contour
 from .osrm_utils_polylline_codec import PolylineCodec
 
 __all__ = ['save_dialog', 'save_dialog_geo', 'prep_access',
-           'prepare_route_symbol',
+           'prepare_route_symbol', 'prep_access_parsed',
            'encode_to_polyline', 'interpolate_from_times', 'get_coords_ids',
            'pts_ref', "put_on_top", 'decode_geom', 'fetch_table',
            'decode_geom_to_pts', 'fetch_nearest',
@@ -118,6 +118,26 @@ def prep_access(time_param):
     polygons = qgsgeom_from_mpl_contour(contour_set)
 
     return polygons
+
+
+def prep_access_parsed(time_param):
+    """Make the regular grid of points, snap them and compute tables"""
+    point = time_param['point']
+    max_time = time_param['max']
+    levels = time_param["levels"]
+    url = time_param["url"]
+    api_key = time_param["api_key"]
+
+    bounds = get_search_frame(point, max_time)
+    coords_grid = make_regular_points(bounds, time_param["max_points"])
+
+    table_data = fetch_table(url, api_key, [point], coords_grid)
+    times = table_data[0]
+    snapped_dest_coords = table_data[2]
+
+    times = (times[0] / 60.0).round(2)  # Round values in minutes
+
+    return [times, np.array(snapped_dest_coords), levels]
 
 
 def save_dialog(filtering="CSV (*.csv *.CSV)"):

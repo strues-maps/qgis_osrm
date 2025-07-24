@@ -184,7 +184,7 @@ class OsrmPlugin:
     def unload(self):
         """Removes the plugin menu item and icon from QGIS GUI."""
         for action in self.actions:
-            self.qgis_iface.removePluginWebMenu(
+            self.qgis_iface.removePluginMenu(
                 self.tr('&Routing with OSRM'),
                 action)
             self.qgis_iface.removeToolBarIcon(action)

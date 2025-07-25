@@ -63,13 +63,29 @@ Fetch a time-distance matrix
 ----------------------------
 **Get a time matrix from one (or between two) QGIS point layer(s)**:
 
-![table illustration](img/table.jpg)
+Request a duration-distance matrix from points in one layer to points in another layer. In the "Source point layer" field, select a layer
+from the current project and select an "Source ID field" from that layer. In the "Destination point layer" field, optionally select the same or
+another layer from the current project and select an "Destination ID field" from that layer. In the "Metrics to be used" field, choose either
+duration to calculate seconds between points, or distance for calculating meters. Marking "Time converted in minutes" will recalculate
+durations from seconds to minutes. The default time matrix will have rows as sources and columns as destinations. Marking the "Flatten the matrix"
+checkbox will output the matrix in the format: ("Source", "Destination", "Distance/Duration") for each row. To save the calculated
+matrix to a file, click the *[Browse]* button, choose a CSV file, and click the *[Fetch and save the result]* button.
+
+![table illustration](img/table.png)
 
 Compute accessibility isochrones
 --------------------------------
 **Compute monocentric or polycentric accessibility isochrones**:
 
-![isochrone illustration](img/multi_isochrone.jpg)
+Request a polycentric access isochrone calculation from points in a Point layer. In the method selection field, select the "By selecting a point
+layer" option. In the "Source point layer" select the layer that will be used as isochrone centers. In the "Max. polygon isochrone" field, enter
+the maximum time for which the isochrone will be calculated. In the "Intervall" field, enter the step size in the isochrone calculation. 
+
+Request a polycentric access isochrone calculation from points on the map. In the method selection field, select "By clicking on the map". Click on the 
+"Center points" button and click on the map. In case there are multiple isochrone centers, click "Center points" before clicking on the map each time. 
+There might be a bug in the project-osrm.org demo instance that prevents isochrones from being calculated, but it works fine with the Local OSRM instances. 
+
+![isochrone illustration](img/isochrone.png)
 
 Compute many *viaroute*
 -----------------------

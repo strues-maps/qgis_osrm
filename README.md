@@ -22,6 +22,14 @@ sudo apt install qttools5-dev-tools pyqt5-dev-tools pylint pycodestyle python3-s
 sudo pip install qgis-plugin-ci --break-system-packages
 ```
 
+Features
+========
+- Find a route
+- Get a time matrix
+- Make accessibility isochrones
+- Solve the Travelling Salesman Problem
+- Compute and export many routes
+
 Examples
 ========
 Images of this page are displayed on OpenStreetMap tiles (© OpenStreetMap contributors) and route computations were done with Open Source Routing Machine.
@@ -82,7 +90,7 @@ layer" option. In the "Source point layer" select the layer that will be used as
 the maximum time for which the isochrone will be calculated. In the "Intervall" field, enter the step size in the isochrone calculation. 
 
 Request a polycentric access isochrone calculation from points on the map. In the method selection field, select "By clicking on the map". Click on the 
-"Center points" button and click on the map. In case there are multiple isochrone centers, click "Center points" before clicking on the map each time. 
+*[Center points]* button and click on the map. In case there are multiple isochrone centers, click *[Center points]* before clicking on the map each time. 
 There might be a bug in the project-osrm.org demo instance that prevents isochrones from being calculated, but it works fine with the Local OSRM instances. 
 
 ![isochrone illustration](img/isochrone.png)
@@ -91,14 +99,26 @@ Compute many *viaroute*
 -----------------------
 **Retrieve many routes between two QGIS layer of points**:
 
-![batch routes illustration](img/many_routes.jpg)
+Request many routes from points in the Origin layer to points in the Destination layer. In the method selection field, select the "Routes between two layers
+of points" option. In the "Origin layer" field, select the layer that will be used as origin points. In the "Destination layer" field, select the layer
+that will be used as destination points. To save routes as a shape file, click on the *[Browse]* button and select an output location and filename. Click on
+the *[Compute and save the result]* button to get the calculations.
+
+Request many routes from a CSV file. In the method selection field, select "Routes from a .csv of paired origins-destinations". Click on the 
+*[Browse]* button and choose a CSV file containing origins-destinations coordinates. In "Origin coords" and "Destination" field columns, select latitude
+and longitude columns from the CSV file. To view routes on the map, check the "Add the result to the canvas" field. In Click on the *[Compute and save the result]*
+button to get the calculations.
+
+![batch routes illustration](img/many_routes.png)
 
 Display the solution of the Travelling Salesman Problem
 -------------------------------------------------------
 **Display the result of the Travelling Salesman Problem computed by OSRM**:
 
-![tsp illustration](img/tsp.jpg)
+Request travelling salesman problem computation by selecting "Source point layer". Marking "Display routing instructions" will create an additional
+instructions layer that contains an attribute table with routing instructions. Click on the *[Display the result]* button to get the calculations.
 
+![tsp illustration](img/tsp.png)
 
 Found a bug?
 ===================================

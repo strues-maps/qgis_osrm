@@ -28,8 +28,8 @@ import os
 from re import match
 from multiprocessing.pool import ThreadPool
 import numpy as np
-from PyQt5 import QtGui, uic
-from PyQt5.QtWidgets import QMessageBox, QDialog
+from qgis.PyQt import QtGui, uic
+from qgis.PyQt.QtWidgets import QMessageBox, QDialog
 from qgis.gui import QgsMapToolEmitPoint  # pylint: disable = no-name-in-module
 from qgis.core import (  # pylint: disable = no-name-in-module
     QgsMapLayerProxyModel, QgsFeature, QgsProject, QgsPointXY,

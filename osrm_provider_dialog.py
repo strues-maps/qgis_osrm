@@ -25,8 +25,8 @@
 """
 
 import os
-from PyQt5 import uic
-from PyQt5.QtWidgets import QMessageBox, QInputDialog, QDialog
+from qgis.PyQt import uic
+from qgis.PyQt.QtWidgets import QMessageBox, QInputDialog, QDialog
 from .template_osrm import TemplateOsrm
 from .osrm_utils import read_providers_config, write_providers_config
 

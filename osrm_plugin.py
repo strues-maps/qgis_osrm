@@ -26,9 +26,9 @@
 
 import os.path
 from qgis.utils import iface
-from PyQt5.QtCore import QTranslator, QCoreApplication, QSettings
-from PyQt5.QtWidgets import QAction
-from PyQt5.QtGui import QIcon
+from qgis.PyQt.QtCore import QTranslator, QCoreApplication, QSettings
+from qgis.PyQt.QtWidgets import QAction
+from qgis.PyQt.QtGui import QIcon
 from .osrm_dialog import OSRMDialog
 from .osrm_table_dialog import OSRMTableDialog
 from .osrm_access_dialog import OSRMAccessDialog

@@ -32,9 +32,9 @@ from functools import lru_cache
 import json
 import yaml
 import numpy as np
-from PyQt5.QtGui import QColor
-from PyQt5.QtCore import QSettings, QFileInfo
-from PyQt5.QtWidgets import QFileDialog, QDialog
+from qgis.PyQt.QtGui import QColor
+from qgis.PyQt.QtCore import QSettings, QFileInfo
+from qgis.PyQt.QtWidgets import QFileDialog, QDialog
 from qgis.core import (  # pylint: disable = no-name-in-module
     QgsGeometry, QgsPointXY, QgsCoordinateReferenceSystem,
     QgsProject, QgsCoordinateTransform, QgsSymbol,

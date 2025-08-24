@@ -26,9 +26,9 @@
 
 import os
 from urllib.error import URLError, HTTPError, ContentTooShortError
-from PyQt5 import QtGui, uic
-from PyQt5.QtGui import QFont, QColor
-from PyQt5.QtWidgets import QDialog
+from qgis.PyQt import QtGui, uic
+from qgis.PyQt.QtGui import QFont, QColor
+from qgis.PyQt.QtWidgets import QDialog
 from qgis.core import (  # pylint: disable = no-name-in-module
     QgsMapLayerProxyModel, QgsPointXY, QgsProject, QgsVectorLayer,
     QgsSymbol, QgsFeature, QgsGeometry, QgsPalLayerSettings, Qgis,

@@ -26,8 +26,8 @@
 from urllib.request import urlopen
 from functools import lru_cache
 import json
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QMessageBox, QProgressBar
+from qgis.PyQt.QtCore import Qt
+from qgis.PyQt.QtWidgets import QMessageBox, QProgressBar
 from qgis.core import (  # pylint: disable = no-name-in-module
     QgsCoordinateReferenceSystem, QgsCoordinateTransform,
     QgsMessageLog, QgsCoordinateTransformContext, Qgis, QgsProject

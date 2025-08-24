@@ -29,6 +29,7 @@ from qgis.core import (  # pylint: disable=no-name-in-module
     QgsExpressionContextUtils, QgsPointXY, QgsGeometry
 )
 import matplotlib
+import qgis.PyQt.QtCore
 
 
 def is_version_less_than(current, reference):
@@ -46,6 +47,12 @@ def is_version_less_than(current, reference):
 def qgis_version_less_than(reference):
     """Compare current QGIS version with one provided as parameter"""
     current = QgsExpressionContextUtils.globalScope().variable('qgis_version')
+    return is_version_less_than(current, reference)
+
+
+def pyqt_version_less_than(reference):
+    """Compare current PyQt version with one provided as parameter"""
+    current = qgis.PyQt.QtCore.QT_VERSION_STR
     return is_version_less_than(current, reference)
 
 

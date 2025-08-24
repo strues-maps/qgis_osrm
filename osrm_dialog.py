@@ -27,8 +27,8 @@
 import os
 from re import match
 from urllib.error import URLError, HTTPError, ContentTooShortError
-from PyQt5 import QtGui, uic
-from PyQt5.QtWidgets import QDialog
+from qgis.PyQt import QtGui, uic
+from qgis.PyQt.QtWidgets import QDialog
 from qgis.gui import QgsMapToolEmitPoint  # pylint: disable = no-name-in-module
 from qgis.core import (  # pylint: disable = no-name-in-module
     QgsFeature, QgsProject, QgsVectorLayer, QgsPointXY,

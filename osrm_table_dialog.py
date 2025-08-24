@@ -29,8 +29,8 @@ import csv
 import sys
 from codecs import open as codecs_open
 import numpy as np
-from PyQt5 import uic
-from PyQt5.QtWidgets import QMessageBox, QDialog
+from qgis.PyQt import uic
+from qgis.PyQt.QtWidgets import QMessageBox, QDialog
 from qgis.core import (  # pylint: disable = no-name-in-module
     QgsMapLayerProxyModel, QgsFieldProxyModel, QgsMessageLog, Qgis
 )

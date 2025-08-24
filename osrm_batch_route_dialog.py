@@ -28,8 +28,8 @@ from re import match
 import os
 from urllib.error import URLError, HTTPError, ContentTooShortError
 from multiprocessing.pool import ThreadPool
-from PyQt5 import uic
-from PyQt5.QtWidgets import QMessageBox, QDialog
+from qgis.PyQt import uic
+from qgis.PyQt.QtWidgets import QMessageBox, QDialog
 from qgis.core import (  # pylint: disable = no-name-in-module
     QgsMapLayerProxyModel, QgsMessageLog,
     QgsCoordinateTransform, QgsFeature, QgsCoordinateReferenceSystem,

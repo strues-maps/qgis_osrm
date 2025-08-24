@@ -10,7 +10,7 @@ github_organization_slug = "strues-maps"
 project_slug = "qgis-osrm"
 [tool.pylint.main]
 init-hook='import sys; sys.path.append("/usr/share/qgis/python/plugins"); sys.path.append("/usr/share/qgis/python"); sys.path.append("/usr/lib");  sys.path.append("/usr/lib/qgis")'
-extension-pkg-whitelist = ["PyQt5"]
+extension-pkg-whitelist = ["PyQt5", "qgis.PyQt"]
 [tool.pylint.format]
 max-line-length = 79
 [tool.pylint.'MESSAGES CONTROL']

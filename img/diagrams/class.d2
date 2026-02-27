@@ -1,0 +1,233 @@
+direction: right
+
+OSRMAccessDialog: {
+    shape: class
+    __init__(self, QgisInterface iface, QWidget parent=None): void
+    closeEvent(self, event): void
+    close_button_clicked(self): void
+    change_nb_center(self): void
+    enable_functionnality(self, str text): void
+    clear_all_isochrone(self): void
+    store_intermediate_acces(self, tuple\[float, float\] point): void
+    get_points_from_canvas(self): "list\[tuple\[float, float\]\]"
+    add_final_pts(self, list\[dict\] pts): void
+    get_access_isochrones(self): void
+    prepare_renderer(tuple\[\] levels, int inter_time, int lenpoly): QgsGraduatedSymbolRenderer
+    style: {
+        text-transform: none
+    }
+}
+
+OSRMBatchRouteDialog: {
+    shape: class
+    __init__(self, QgisInterface iface, QWidget parent=None): void
+    clear_all_routes(self): void
+    output_dialog_geo(self): void
+    input_dialog_csv(self): int
+    enable_functionnality(self, str text): void
+    _prepare_queries(self): "list\[tuple\[float, float, float, float\]\]"
+    reverse_origin_destination_batch(self): void
+    switch_origin_destination_fields(self): void
+    switch_origin_destination_box(self): void
+    get_batch_route(self): int
+    prep_routes(self, tuple\[float, float, float, float\] query): QgsFeature
+    return_batch_route(self, list\[QgsFeature\] features): int
+    style: {
+        text-transform: none
+    }
+}
+
+OSRMDialog: {
+    shape: class
+    __init__(self, QgisInterface iface, QWidget parent=None): void
+    closeEvent(self, event): void
+    close_button_clicked(self): void
+    store_intermediate(self, tuple\[float, float\] point): void
+    store_destination(self, tuple\[float, float\] point): void
+    get_alternatives(self, QgsDataProvider provider): void
+    reverse_origin_destination(self): void
+    clear_all_single(self): void
+    prep_instruction(self, int nb_route, dict routes_json, boolean alt=None): "tuple[QgsDataProvider, QgsVectorLayer]"
+    make_origin_destination_markers(int nb, float xo, float yo, float xd, float yd, list\[tuple\[\]\] list_coords=None): QgsVectorLayer
+    get_route(self): int
+    style: {
+        text-transform: none
+    }
+}
+
+OSRMDialogTSP: {
+    shape: class
+    __init__(self, QgisInterface iface, QWidget parent=None): void
+    clear_results(self): void
+    prep_instruction(self, int nb_route, dict routes_json, boolean alt=None): "tuple[QgsDataProvider, QgsVectorLayer]"
+    run_tsp(self): int
+    prepare_ordered_marker(self, list\[tuple\[\]\] coords): void
+    style: {
+        text-transform: none
+    }
+}
+
+OSRMProviderDialog: {
+    shape: class
+    __init__(self, QgisInterface iface, QWidget parent=None): void
+    new_provider(self): int
+    save_provider(self): int
+    delete_provider(self): void
+    provider_changed(self): void
+    populate_combo_box_provider(self): void
+    style: {
+        text-transform: none
+    }
+}
+
+OSRMTableDialog: {
+    shape: class
+    __init__(self, iface, parent=None): void
+    metrics_changed(self): void
+    output_dialog(self): void 
+    get_table(self): int
+    style: {
+        text-transform: none
+    }
+}
+
+TemplateOsrm: {
+    shape: class
+    __init__(self): void
+    load_providers(self): void
+    display_error(self, error, code): void
+    make_prog_bar(self): void
+    query_url(url): dict
+    print_about(self): void
+    store_origin(self, point): void
+    transform_point_for_storage(self, QgsMapCanvas canvas, QgsPointXY point): QgsPointXY point
+    transform_point_to_str(self, QgsPointXY point): string
+    transform_str_to_coords(self, str point_str): tuple\[float, float\]
+    transform_str_to_coords_list(self, points_str): list\[tuple\[float, float\]\]
+    prepare_request_url(self, str base_url, str action): string
+    provider_changed(self): void
+    load_last_provider(self): void
+    populate_combo_box_provider(self): void
+    repaint_layers(self): int
+    style: {
+        text-transform: none
+    }
+}
+
+OsrmPlugin: {
+    shape: class
+    __init__(self, QgisInterface qgis_iface): void
+    tr(self, str message): str
+    add_action(self, str icon_path, str text, boolean add_to_toolbar=True, QWidget parent=None): QAction
+    initGui(self): void
+    unload(self): void
+    run_route(self): void
+    run_batch_route(self): void
+    run_table(self): void
+    run_tsp(self): void
+    run_accessibility(self): void
+    run_configure(self): void
+    get_origin(self): void
+    get_destination(self): void
+    get_intermediate(self): void
+    style: {
+        text-transform: none
+    }
+}
+
+OSRMAccessDialog -> TemplateOsrm: inherits {
+    style {
+        stroke: black
+        stroke-dash: 3
+        filled: false
+    }
+}
+
+OSRMBatchRouteDialog -> TemplateOsrm: inherits {
+    style {
+        stroke: black
+        stroke-dash: 3
+        filled: false
+    }
+}
+
+OSRMDialog -> TemplateOsrm: inherits {
+    style {
+        stroke: black
+        stroke-dash: 3
+        filled: false
+    }
+}
+
+OSRMDialogTSP -> TemplateOsrm: inherits {
+    style {
+        stroke: black
+        stroke-dash: 3
+        filled: false
+    }
+}
+
+OSRMProviderDialog -> TemplateOsrm: inherits {
+    style {
+        stroke: black
+        stroke-dash: 3
+        filled: false
+    }
+}
+
+OSRMTableDialog -> TemplateOsrm: inherits {
+    style {
+        stroke: black
+        stroke-dash: 3
+        filled: false
+    }
+}
+
+OsrmPlugin <- OSRMAccessDialog: has {
+    source-arrowhead.shape: diamond
+    style {
+        stroke: black
+        filled: false
+    }
+}
+
+OsrmPlugin <- OSRMBatchRouteDialog: has {
+    source-arrowhead.shape: diamond
+    style {
+        stroke: black
+        filled: false
+    }
+}
+
+OsrmPlugin <- OSRMDialog: has {
+    source-arrowhead.shape: diamond
+    style {
+        stroke: black
+        filled: false
+    }
+}
+
+OsrmPlugin <- OSRMDialogTSP: has {
+    source-arrowhead.shape: diamond
+    style {
+        stroke: black
+        filled: false
+    }
+}
+
+OsrmPlugin <- OSRMProviderDialog: has {
+    source-arrowhead.shape: diamond
+    style {
+        stroke: black
+        filled: false
+    }
+}
+
+OsrmPlugin <- OSRMTableDialog: has {
+    source-arrowhead.shape: diamond
+    style {
+        stroke: black
+        filled: false
+    }
+}
+

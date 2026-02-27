@@ -120,6 +120,10 @@ instructions layer that contains an attribute table with routing instructions. C
 
 ![tsp illustration](img/tsp.png)
 
+Class diagram
+========
+![class diagram](img/diagrams/class.png)
+
 Found a bug?
 ===================================
 If you found a bug, feel free to report it at https://github.com/strues-maps/qgis_osrm/issues

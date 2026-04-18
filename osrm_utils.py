@@ -34,7 +34,6 @@ import yaml
 import numpy as np
 from qgis.PyQt.QtGui import QColor
 from qgis.PyQt.QtCore import QSettings, QFileInfo
-from qgis.PyQt.QtWidgets import QFileDialog, QDialog
 from qgis.core import (  # pylint: disable = no-name-in-module
     QgsGeometry, QgsPointXY, QgsCoordinateReferenceSystem,
     QgsProject, QgsCoordinateTransform, QgsSymbol,
@@ -46,6 +45,9 @@ from qgis.gui import (  # pylint: disable = no-name-in-module
 from matplotlib import use as matplotlib_use
 from matplotlib.pyplot import contourf
 from scipy.interpolate import griddata
+from .osrm_polyfill import QFileDialog_AcceptMode_AcceptOpen
+from .osrm_polyfill import QFileDialog_AcceptMode_AcceptSave
+from .osrm_polyfill import QFileDialog_FileMode_AnyFile
 from .osrm_polyfill import Qgis_GeometryType_Line
 from .osrm_polyfill import qgsgeom_from_mpl_contour
 from .osrm_utils_polylline_codec import PolylineCodec
@@ -65,8 +67,7 @@ matplotlib_use('agg')
 def _chain(*lists):
     """Flatten array"""
     for li in lists:
-        for elem in li:
-            yield elem
+        yield from li
 
 
 def encode_to_polyline(pts):
@@ -149,16 +150,16 @@ def save_dialog(filtering="CSV (*.csv *.CSV)"):
         None, "Save output csv", dir_name, filtering, encode
         )
     file_dialog.setDefaultSuffix('csv')
-    file_dialog.setFileMode(QFileDialog.AnyFile)
-    file_dialog.setAcceptMode(QFileDialog.AcceptSave)
-    if not file_dialog.exec_() == QDialog.Accepted:
-        return None, None
-    files = file_dialog.selectedFiles()
-    settings.setValue(
-        "/UI/lastShapefileDir",
-        QFileInfo(files[0]).absolutePath()
-    )
-    return (files[0], file_dialog.encoding())
+    file_dialog.setFileMode(QFileDialog_FileMode_AnyFile())
+    file_dialog.setAcceptMode(QFileDialog_AcceptMode_AcceptSave())
+    if file_dialog.exec():
+        files = file_dialog.selectedFiles()
+        settings.setValue(
+            "/UI/lastShapefileDir",
+            QFileInfo(files[0]).absolutePath()
+        )
+        return (files[0], file_dialog.encoding())
+    return None, None
 
 
 def open_dialog(filtering="CSV (*.csv *.CSV)"):
@@ -172,16 +173,16 @@ def open_dialog(filtering="CSV (*.csv *.CSV)"):
         None, "Choose input csv", dir_name, filtering, encode
         )
     file_dialog.setDefaultSuffix('csv')
-    file_dialog.setFileMode(QFileDialog.AnyFile)
-    file_dialog.setAcceptMode(QFileDialog.AcceptOpen)
-    if not file_dialog.exec_() == QDialog.Accepted:
-        return None, None
-    files = file_dialog.selectedFiles()
-    settings.setValue(
-        "/UI/lastCsvFileDir",
-        QFileInfo(files[0]).absolutePath()
-    )
-    return (files[0], file_dialog.encoding())
+    file_dialog.setFileMode(QFileDialog_FileMode_AnyFile())
+    file_dialog.setAcceptMode(QFileDialog_AcceptMode_AcceptOpen())
+    if file_dialog.exec():
+        files = file_dialog.selectedFiles()
+        settings.setValue(
+            "/UI/lastCsvFileDir",
+            QFileInfo(files[0]).absolutePath()
+        )
+        return (files[0], file_dialog.encoding())
+    return None, None
 
 
 def read_csv(filename, file_encoding):
@@ -208,16 +209,16 @@ def save_dialog_geo(filtering="ESRI Shapefile (*.shp *.SHP)"):
         encode
     )
     file_dialog.setDefaultSuffix('shp')
-    file_dialog.setFileMode(QFileDialog.AnyFile)
-    file_dialog.setAcceptMode(QFileDialog.AcceptSave)
-    if not file_dialog.exec_() == QDialog.Accepted:
-        return None, None
-    files = file_dialog.selectedFiles()
-    settings.setValue(
-        "/UI/lastShapefileDir",
-        QFileInfo(files[0]).absolutePath()
-    )
-    return (files[0], file_dialog.encoding())
+    file_dialog.setFileMode(QFileDialog_FileMode_AnyFile())
+    file_dialog.setAcceptMode(QFileDialog_AcceptMode_AcceptSave())
+    if file_dialog.exec():
+        files = file_dialog.selectedFiles()
+        settings.setValue(
+            "/UI/lastShapefileDir",
+            QFileInfo(files[0]).absolutePath()
+        )
+        return (files[0], file_dialog.encoding())
+    return None, None
 
 
 def prepare_route_symbol(nb_route):
@@ -358,7 +359,7 @@ def fetch_table(url, api_key, coords_src, coords_dest, metrics='Durations'):
             ]
         )
         if api_key:
-            query = ''.join([query, 'api_key=', api_key])
+            query = ''.join([query, '&api_key=', api_key])
     else:
         src_end = len(coords_src)
         dest_end = src_end + len(coords_dest)

@@ -158,6 +158,7 @@ class OSRMDialogTSP(QDialog, FORM_CLASS_DIALOG_TSP, TemplateOsrm):
             layer, '', on_selected=self.checkBox_selec_features.isChecked())
 
         if len(coords) < 2:
+            self.print_no_features()
             return -1
 
         steps = str(self.checkBox_instructions.isChecked()).lower()

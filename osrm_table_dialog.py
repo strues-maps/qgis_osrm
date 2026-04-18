@@ -67,6 +67,7 @@ class OSRMTableDialog(QDialog, FORM_CLASS_TABLE_DIALOG_BASE, TemplateOsrm):
         )
         self.comboBox_idfield_2.setFilters(id_field_filter)
         self.comboBox_idfield.setFilters(id_field_filter)
+        self.comboBox_idfield.setLayer(self.comboBox_layer.currentLayer())
 
         self.comboBox_layer.layerChanged.connect(
             self.comboBox_idfield.setLayer
@@ -81,6 +82,8 @@ class OSRMTableDialog(QDialog, FORM_CLASS_TABLE_DIALOG_BASE, TemplateOsrm):
         self.comboBox_layer_2.layerChanged.connect(
             self.comboBox_idfield_2.setLayer
         )
+        self.comboBox_idfield_2.setLayer(self.comboBox_layer_2.currentLayer())
+
         self.combo_box_metrics.currentTextChanged.connect(
             self.metrics_changed
         )

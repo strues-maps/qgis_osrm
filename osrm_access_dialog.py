@@ -62,7 +62,7 @@ class OSRMAccessDialog(QDialog, FORM_CLASS_ACCESS_DIALOG_BASE, TemplateOsrm):
         self.origin_emit = QgsMapToolEmitPoint(self.canvas)
         self.intermediate_emit = QgsMapToolEmitPoint(self.canvas)
         self.comboBox_pointlayer.setFilters(QgsMapLayerProxyModel.PointLayer)
-        self.comboBox_method.activated[str].connect(self.enable_functionnality)
+        self.comboBox_method.activated.connect(self.enable_functionnality)
         self.pushButton_fetch.clicked.connect(self.get_access_isochrones)
         self.pushButtonClear.clicked.connect(self.clear_all_isochrone)
         self.close_button_box.clicked.connect(self.close_button_clicked)
@@ -89,7 +89,7 @@ class OSRMAccessDialog(QDialog, FORM_CLASS_ACCESS_DIALOG_BASE, TemplateOsrm):
         """Update isochrones centers count in UI"""
         # nb_center = self.lineEdit_xyO.text().count('(')
 
-    def enable_functionnality(self, text):
+    def enable_functionnality(self):
         """Load preset functionality groups according to text parameter"""
         functions = (
             self.pushButtonIntermediate.setEnabled,
@@ -99,6 +99,7 @@ class OSRMAccessDialog(QDialog, FORM_CLASS_ACCESS_DIALOG_BASE, TemplateOsrm):
             self.checkBox_selectedFt.setEnabled,
             self.pushButton_fetch.setEnabled
         )
+        text = self.comboBox_method.currentText()
         if 'clicking' in text:
             values = (True, True, False, False, False, True)
         elif 'selecting' in text:
@@ -194,6 +195,7 @@ class OSRMAccessDialog(QDialog, FORM_CLASS_ACCESS_DIALOG_BASE, TemplateOsrm):
             pts = tuple(pts)
 
         if not pts:
+            self.print_no_features()
             return
 
         max_time = self.spinBox_max.value()

@@ -26,7 +26,6 @@
 from urllib.request import urlopen
 from functools import lru_cache
 import json
-from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtWidgets import QMessageBox, QProgressBar
 from qgis.core import (  # pylint: disable = no-name-in-module
     QgsCoordinateReferenceSystem, QgsCoordinateTransform,
@@ -36,6 +35,11 @@ from .osrm_utils import (
     read_providers_config, save_last_provider,
     load_last_provider
 )
+from .osrm_polyfill import Qgis_QMessageBox_Icon_Information
+from .osrm_polyfill import Qgis_QMessageBox_Icon_Warning
+from .osrm_polyfill import Qt_AlignmentFlag_AlignLeft
+from .osrm_polyfill import Qt_AlignmentFlag_AlignVCenter
+from .osrm_polyfill import Qt_TextFormat_RichText
 
 
 class TemplateOsrm:
@@ -91,7 +95,9 @@ class TemplateOsrm:
         )
         self.progress = QProgressBar()
         self.progress.setMaximum(100)
-        self.progress.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
+        self.progress.setAlignment(
+            Qt_AlignmentFlag_AlignLeft() | Qt_AlignmentFlag_AlignVCenter()
+        )
         prog_message_bar.layout().addWidget(self.progress)
         self.iface.messageBar().pushWidget(prog_message_bar, Qgis.Info)
 
@@ -107,14 +113,14 @@ class TemplateOsrm:
     def print_about(self):
         """Shows plugin about dialog box"""
         mbox = QMessageBox(self.iface.mainWindow())
-        mbox.setIcon(QMessageBox.Information)
+        mbox.setIcon(Qgis_QMessageBox_Icon_Information())
         mbox.setWindowTitle('About')
-        mbox.setTextFormat(Qt.RichText)
+        mbox.setTextFormat(Qt_TextFormat_RichText())
         mbox.setText(
-            "<p><b>(Unofficial) OSRM plugin for QGIS 3.x</b><br><br>"
+            "<p><b>(Unofficial) OSRM plugin for QGIS 3.x/4.x</b><br><br>"
             "Author: mthh, 2015<br>Author: strues-maps, 2025<br>"
             "Licence : GNU GPL v2<br><br><br>Underlying routing "
-            "engine is <a href='http://project-osrm.org'>OSRM</a>"
+            "engine is <a href='http://project-osrm.org'>OSRM</a> "
             "(Open Source Routing Engine) :<br>- Based on <a href='http://"
             "www.openstreetmap.org/copyright'>OpenStreetMap</a> "
             "dataset<br>- Easy to start a local instance<br>"
@@ -123,6 +129,16 @@ class TemplateOsrm:
             "Vetter<br>(<a href='http://project-osrm.org'>http://project-osrm"
             ".org</a> or <a href='https://github.com/Project-OSRM/osrm"
             "-backend#references-in-publications'>on GitHub</a>)<br></p>")
+        mbox.open()
+
+    def print_no_features(self):
+        """Shows no features selected dialog box"""
+        mbox = QMessageBox(self.iface.mainWindow())
+        mbox.setIcon(Qgis_QMessageBox_Icon_Warning())
+        mbox.setWindowTitle('No features selected')
+        mbox.setTextFormat(Qt_TextFormat_RichText())
+        mbox.setText(
+            "<p>No features were selected on map.</p>")
         mbox.open()
 
     def store_origin(self, point):

@@ -65,7 +65,7 @@ class OSRMBatchRouteDialog(QDialog, FORM_CLASS_BATCH_ROUTE, TemplateOsrm):
         self.pushButtonCsv.clicked.connect(self.input_dialog_csv)
         self.pushButtonRun.clicked.connect(self.get_batch_route)
         self.pushButtonClear.clicked.connect(self.clear_all_routes)
-        self.comboBox_method.activated[str].connect(self.enable_functionnality)
+        self.comboBox_method.activated.connect(self.enable_functionnality)
         self.nb_route = 0
         self.nb_done = 0
         self.errors = 0
@@ -128,7 +128,7 @@ class OSRMBatchRouteDialog(QDialog, FORM_CLASS_BATCH_ROUTE, TemplateOsrm):
                 level=Qgis.Warning)
             return -1
 
-    def enable_functionnality(self, text):
+    def enable_functionnality(self):
         """Load preset functionality groups according to text parameter"""
         functions = (
             self.ComboBoxOrigin.setEnabled, self.label_2.setEnabled,
@@ -140,6 +140,7 @@ class OSRMBatchRouteDialog(QDialog, FORM_CLASS_BATCH_ROUTE, TemplateOsrm):
             self.label_8.setEnabled, self.label_9.setEnabled,
             self.lineEdit_csv.setEnabled
         )
+        text = self.comboBox_method.currentText()
         if 'layer' in text:
             values = (True, True, True, True,
                       False, False, False, False, False,

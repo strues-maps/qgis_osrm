@@ -80,6 +80,87 @@ def Qgis_GeometryType_Point():  # pylint: disable=invalid-name
     return Qgis.GeometryType.Point
 
 
+def Qgis_QMessageBox_Icon_Information():  # pylint: disable=invalid-name
+    """Polyfill for QMessageBox.Icon.Information"""
+    # pylint: disable=line-too-long
+    from qgis.PyQt.QtWidgets import QMessageBox  # noqa
+
+    if pyqt_version_less_than('6.0'):
+        return QMessageBox.Information
+
+    return QMessageBox.Icon.Information
+
+
+def Qgis_QMessageBox_Icon_Warning():  # pylint: disable=invalid-name
+    """Polyfill for QMessageBox.Icon.Warning"""
+    from qgis.PyQt.QtWidgets import QMessageBox  # noqa
+
+    if pyqt_version_less_than('6.0'):
+        return QMessageBox.Warning
+
+    return QMessageBox.Icon.Warning
+
+
+def Qt_TextFormat_RichText():  # pylint: disable=invalid-name
+    """Polyfill for Qt.TextFormat.RichText"""
+    from qgis.PyQt.QtCore import Qt  # pylint: disable=no-name-in-module
+
+    if pyqt_version_less_than('6.0'):
+        return Qt.RichText
+
+    return Qt.TextFormat.RichText
+
+
+def QFileDialog_FileMode_AnyFile():  # pylint: disable=invalid-name
+    """Polyfill for QFileDialog.FileMode.AnyFile"""
+    from qgis.PyQt.QtWidgets import QFileDialog
+
+    if pyqt_version_less_than('6.0'):
+        return QFileDialog.AnyFile
+
+    return QFileDialog.FileMode.AnyFile
+
+
+def QFileDialog_AcceptMode_AcceptOpen():  # pylint: disable=invalid-name
+    """Polyfill for QFileDialog.AcceptMode.AcceptOpen"""
+    from qgis.PyQt.QtWidgets import QFileDialog
+
+    if pyqt_version_less_than('6.0'):
+        return QFileDialog.AcceptOpen
+
+    return QFileDialog.AcceptMode.AcceptOpen
+
+
+def QFileDialog_AcceptMode_AcceptSave():  # pylint: disable=invalid-name
+    """Polyfill for QFileDialog.AcceptMode.AcceptSave"""
+    from qgis.PyQt.QtWidgets import QFileDialog
+
+    if pyqt_version_less_than('6.0'):
+        return QFileDialog.AcceptSave
+
+    return QFileDialog.AcceptMode.AcceptSave
+
+
+def Qt_AlignmentFlag_AlignLeft():  # pylint: disable=invalid-name
+    """Polyfill for Qt.Alignment.AlignLeft"""
+    from qgis.PyQt.QtCore import Qt  # pylint: disable=no-name-in-module
+
+    if pyqt_version_less_than('6.0'):
+        return Qt.AlignLeft
+
+    return Qt.AlignmentFlag.AlignLeft
+
+
+def Qt_AlignmentFlag_AlignVCenter():  # pylint: disable=invalid-name
+    """Polyfill for Qt.Alignment.AlignLeft"""
+    from qgis.PyQt.QtCore import Qt  # pylint: disable=no-name-in-module
+
+    if pyqt_version_less_than('6.0'):
+        return Qt.AlignVCenter
+
+    return Qt.AlignmentFlag.AlignVCenter
+
+
 def qgsgeom_from_mpl_contour(contour_set):
     """Convert MatPlotLib polygons to QgsGeometry polygons"""
     if matplotlib_version_less_than('3.9'):

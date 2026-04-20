@@ -365,7 +365,7 @@ class OSRMBatchRouteDialog(QDialog, FORM_CLASS_BATCH_ROUTE, TemplateOsrm):
         fet.setGeometry(line_geom)
         fet.setAttributes([
             self.nb_route,
-            parsed['routes'][0]['duration'],
+            parsed['routes'][0]['duration'] / 60,
             parsed['routes'][0]['distance']
         ])
         self.nb_route += 1
@@ -376,7 +376,7 @@ class OSRMBatchRouteDialog(QDialog, FORM_CLASS_BATCH_ROUTE, TemplateOsrm):
         """Save and/or display the routes retrieved"""
         osrm_batch_route_layer = QgsVectorLayer(
             "Linestring?crs=epsg:4326&field=id:integer"
-            "&field=total_time:integer(20)&field=distance:integer(20)",
+            "&field=total_time_min:integer(20)&field=distance_m:integer(20)",
             f"routes_osrm{self.nb_done}",
             "memory"
         )

@@ -107,7 +107,7 @@ class OSRMDialog(QDialog, FORM_CLASS_DIALOG_BASE, TemplateOsrm):
             fet.setGeometry(decoded_alt_line)
             fet.setAttributes([
                 i + 1,
-                alt_geom["duration"],
+                alt_geom["duration"] / 60,
                 alt_geom["distance"]
             ])
             provider.addFeatures([fet])
@@ -349,7 +349,7 @@ class OSRMDialog(QDialog, FORM_CLASS_DIALOG_BASE, TemplateOsrm):
         self.nb_route += 1
         osrm_route_layer = QgsVectorLayer(
             "Linestring?crs=epsg:4326&field=id:integer"
-            "&field=total_time:integer(20)&field=distance:integer(20)",
+            "&field=total_time_min:integer(20)&field=distance_m:integer(20)",
             f"route_osrm{self.nb_route}", "memory")
         my_symb = prepare_route_symbol(self.nb_route)
         osrm_route_layer.setRenderer(QgsSingleSymbolRenderer(my_symb))
@@ -363,7 +363,7 @@ class OSRMDialog(QDialog, FORM_CLASS_DIALOG_BASE, TemplateOsrm):
             fet.setGeometry(line_geom)
             fet.setAttributes([
                 i,
-                route["duration"],
+                route["duration"] / 60,
                 route["distance"]
             ])
             features.append(fet)

@@ -201,7 +201,7 @@ class OSRMDialogTSP(QDialog, FORM_CLASS_DIALOG_TSP, TemplateOsrm):
 
         tsp_route_layer = QgsVectorLayer(
             "Linestring?crs=epsg:4326&field=id:integer"
-            "&field=total_time:integer(20)&field=distance:integer(20)",
+            "&field=total_time_min:integer(20)&field=distance_m:integer(20)",
             f"tsp_solution_osrm{self.nb_route}", "memory")
         my_symb = prepare_route_symbol(self.nb_route)
         tsp_route_layer.setRenderer(QgsSingleSymbolRenderer(my_symb))
@@ -210,8 +210,8 @@ class OSRMDialogTSP(QDialog, FORM_CLASS_DIALOG_TSP, TemplateOsrm):
             ft = QgsFeature()
             ft.setGeometry(line_geoms[trip_idx])
             ft.setAttributes([trip_idx,
-                              feature['distance'],
-                              feature['duration']])
+                              feature['duration'] / 60,
+                              feature['distance']])
             features.append(ft)
             self.prepare_ordered_marker(coords)
         tsp_route_layer.dataProvider().addFeatures(features)

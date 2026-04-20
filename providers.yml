@@ -11,6 +11,6 @@ providers:
 - api_key: ''
   base_url: https://routing.openstreetmap.de/routed-foot/{action}/v1/driving/
   name: OSM DE Foot Routing
-- api_key: API_KEY
+- api_key: ''
   base_url: https://api.strues-maps.lt/v1/{action}/
   name: Strues-Maps Car Routing

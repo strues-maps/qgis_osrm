@@ -23,7 +23,7 @@
  *                                                                         *
  ***************************************************************************/
 """
-from urllib.request import urlopen
+from urllib.request import urlopen, Request
 from functools import lru_cache
 import json
 from qgis.PyQt.QtWidgets import QMessageBox, QProgressBar
@@ -105,7 +105,7 @@ class TemplateOsrm:
     @lru_cache(maxsize=30)
     def query_url(url):
         """Loads and decodes json data from specified url"""
-        with urlopen(url) as r:
+        with urlopen(Request(url)) as r:
             return json.loads(r.read(), strict=False)
 
         return None

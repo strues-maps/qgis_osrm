@@ -26,7 +26,7 @@
 import csv
 import os
 from configparser import ConfigParser
-from urllib.request import urlopen
+from urllib.request import urlopen, Request
 from urllib.error import URLError, HTTPError, ContentTooShortError
 from functools import lru_cache
 import json
@@ -386,7 +386,7 @@ def fetch_table(url, api_key, coords_src, coords_dest, metrics='Durations'):
     print(f"Fetch table query: {query}")
 
     try:
-        with urlopen(query) as res:
+        with urlopen(Request(query)) as res:
             content = res.read()
             parsed_json = json.loads(content, strict=False)
             assert parsed_json["code"] == "Ok"
@@ -445,7 +445,7 @@ def fetch_nearest(host, profile, coord):
     url = ''.join(['http://', host, '/nearest/',
                    profile, '/', str(coord[0]), ',', str(coord[1])])
     try:  # Querying the OSRM instance
-        with urlopen(url) as rep:
+        with urlopen(Request(url)) as rep:
             parsed_json = json.loads(rep.read(), strict=False)
     except (URLError, HTTPError, ContentTooShortError):
         return False

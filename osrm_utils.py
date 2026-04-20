@@ -148,7 +148,7 @@ def save_dialog(filtering="CSV (*.csv *.CSV)"):
     encode = settings.value("/UI/encoding")
     file_dialog = QgsEncodingFileDialog(
         None, "Save output csv", dir_name, filtering, encode
-        )
+    )
     file_dialog.setDefaultSuffix('csv')
     file_dialog.setFileMode(QFileDialog_FileMode_AnyFile())
     file_dialog.setAcceptMode(QFileDialog_AcceptMode_AcceptSave())
@@ -171,7 +171,7 @@ def open_dialog(filtering="CSV (*.csv *.CSV)"):
 
     file_dialog = QgsEncodingFileDialog(
         None, "Choose input csv", dir_name, filtering, encode
-        )
+    )
     file_dialog.setDefaultSuffix('csv')
     file_dialog.setFileMode(QFileDialog_FileMode_AnyFile())
     file_dialog.setAcceptMode(QFileDialog_AcceptMode_AcceptOpen())

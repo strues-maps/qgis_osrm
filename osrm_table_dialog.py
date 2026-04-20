@@ -61,9 +61,9 @@ class OSRMTableDialog(QDialog, FORM_CLASS_TABLE_DIALOG_BASE, TemplateOsrm):
         self.comboBox_layer.setFilters(QgsMapLayerProxyModel.PointLayer)
 
         id_field_filter = (
-            QgsFieldProxyModel.Double | QgsFieldProxyModel.Int |
-            QgsFieldProxyModel.LongLong | QgsFieldProxyModel.Numeric |
-            QgsFieldProxyModel.String
+            QgsFieldProxyModel.Double | QgsFieldProxyModel.Int
+            | QgsFieldProxyModel.LongLong | QgsFieldProxyModel.Numeric
+            | QgsFieldProxyModel.String
         )
         self.comboBox_idfield_2.setFilters(id_field_filter)
         self.comboBox_idfield.setFilters(id_field_filter)

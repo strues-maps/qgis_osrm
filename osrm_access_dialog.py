@@ -38,8 +38,8 @@ from qgis.core import (  # pylint: disable = no-name-in-module
     QgsSingleSymbolRenderer
 )
 from .osrm_utils import (
-   get_isochrones_colors, prep_access_parsed, get_coords_ids,
-   interpolate_from_times, qgsgeom_from_mpl_contour
+    get_isochrones_colors, prep_access_parsed, get_coords_ids,
+    interpolate_from_times, qgsgeom_from_mpl_contour
 )
 from .osrm_polyfill import Qgis_GeometryType_Point
 from .template_osrm import TemplateOsrm

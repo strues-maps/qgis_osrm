@@ -279,8 +279,8 @@ class OSRMDialog(QDialog, FORM_CLASS_DIALOG_BASE, TemplateOsrm):
         try:
             assert match('^[^a-zA-Z]+$', origin) and 46 > len(origin) > 4
             assert (
-               match('^[^a-zA-Z]+$', destination)
-               and 46 > len(destination) > 4
+                match('^[^a-zA-Z]+$', destination)
+                and 46 > len(destination) > 4
             )
             xo, yo = self.transform_str_to_coords(origin)
             xd, yd = self.transform_str_to_coords(destination)

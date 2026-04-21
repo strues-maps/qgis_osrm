@@ -94,8 +94,8 @@ class OSRMDialogTSP(QDialog, FORM_CLASS_DIALOG_TSP, TemplateOsrm):
             "&field=maneuver_modifier:string(254)"
             "&field=maneuver_exit:integer(20)"
             "&field=street_name:string(254)"
-            "&field=length_m:string(254)&field=route_idx:integer(20)"
-            "&field=time_min:string(254)",
+            "&field=length_m:real(20)&field=route_idx:integer(20)"
+            "&field=time_min:real(20)",
             f"instruction_tsp_osrm{nb_route}",
             "memory")
         provider = osrm_instruction_layer.dataProvider()

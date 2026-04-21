@@ -25,7 +25,7 @@
 """
 
 import os
-from urllib.error import URLError, HTTPError, ContentTooShortError
+from urllib3.exceptions import HTTPError
 from qgis.PyQt import QtGui, uic
 from qgis.PyQt.QtGui import QFont, QColor
 from qgis.PyQt.QtWidgets import QDialog
@@ -178,7 +178,7 @@ class OSRMDialogTSP(QDialog, FORM_CLASS_DIALOG_TSP, TemplateOsrm):
 
         try:
             self.parsed = self.query_url(query)
-        except (URLError, HTTPError, ContentTooShortError) as err:
+        except (HTTPError) as err:
             self.iface.messageBar().pushMessage(
                 "Error", "An error occured when trying to contact the OSRM "
                 "instance (see QGis log for error traceback)",

@@ -26,8 +26,8 @@
 
 from re import match
 import os
-from urllib.error import URLError, HTTPError, ContentTooShortError
 from multiprocessing.pool import ThreadPool
+from urllib3.exceptions import HTTPError
 from qgis.PyQt import uic
 from qgis.PyQt.QtWidgets import QMessageBox, QDialog
 from qgis.core import (  # pylint: disable = no-name-in-module
@@ -344,7 +344,7 @@ class OSRMBatchRouteDialog(QDialog, FORM_CLASS_BATCH_ROUTE, TemplateOsrm):
             if self.api_key:
                 url = ''.join([url, '&api_key=', self.api_key])
             parsed = self.query_url(url)
-        except (URLError, HTTPError, ContentTooShortError) as err:
+        except (HTTPError) as err:
             self.display_error(err, 1)
             self.errors += 1
 

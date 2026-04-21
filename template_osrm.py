@@ -23,9 +23,9 @@
  *                                                                         *
  ***************************************************************************/
 """
-from urllib.request import urlopen, Request
 from functools import lru_cache
 import json
+import urllib3
 from qgis.PyQt.QtWidgets import QMessageBox, QProgressBar
 from qgis.core import (  # pylint: disable = no-name-in-module
     QgsCoordinateReferenceSystem, QgsCoordinateTransform,
@@ -105,10 +105,9 @@ class TemplateOsrm:
     @lru_cache(maxsize=30)
     def query_url(url):
         """Loads and decodes json data from specified url"""
-        with urlopen(Request(url)) as r:
-            return json.loads(r.read(), strict=False)
-
-        return None
+        http = urllib3.PoolManager()
+        res = http.request('GET', url, timeout=60)
+        return json.loads(res.data, strict=False)
 
     def print_about(self):
         """Shows plugin about dialog box"""

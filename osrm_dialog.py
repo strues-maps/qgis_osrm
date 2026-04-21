@@ -26,7 +26,6 @@
 
 import os
 from re import match
-from urllib.error import URLError, HTTPError, ContentTooShortError
 from qgis.PyQt import QtGui, uic
 from qgis.PyQt.QtWidgets import QDialog
 from qgis.gui import QgsMapToolEmitPoint  # pylint: disable = no-name-in-module
@@ -279,8 +278,7 @@ class OSRMDialog(QDialog, FORM_CLASS_DIALOG_BASE, TemplateOsrm):
         try:
             assert match('^[^a-zA-Z]+$', origin) and 46 > len(origin) > 4
             assert (
-                match('^[^a-zA-Z]+$', destination)
-                and 46 > len(destination) > 4
+                match('^[^a-zA-Z]+$', destination) and 46 > len(destination) > 4  # pylint: disable=line-too-long
             )
             xo, yo = self.transform_str_to_coords(origin)
             xd, yd = self.transform_str_to_coords(destination)
@@ -324,10 +322,8 @@ class OSRMDialog(QDialog, FORM_CLASS_DIALOG_BASE, TemplateOsrm):
             self.parsed = self.query_url(url)
             assert "code" in self.parsed
         except (
-            URLError,
-            HTTPError,
-            ContentTooShortError,
-            AssertionError
+            AssertionError,
+            Exception
         ) as err:
             self.display_error(err, 1)
             return -1

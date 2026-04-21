@@ -26,10 +26,11 @@
 import csv
 import os
 from configparser import ConfigParser
-from urllib.request import urlopen, Request
-from urllib.error import URLError, HTTPError, ContentTooShortError
 from functools import lru_cache
 import json
+from json import JSONDecodeError
+from urllib3.exceptions import HTTPError
+import urllib3
 import yaml
 import numpy as np
 from qgis.PyQt.QtGui import QColor
@@ -386,18 +387,24 @@ def fetch_table(url, api_key, coords_src, coords_dest, metrics='Durations'):
     print(f"Fetch table query: {query}")
 
     try:
-        with urlopen(Request(query)) as res:
-            content = res.read()
-            parsed_json = json.loads(content, strict=False)
-            assert parsed_json["code"] == "Ok"
-            assert metrics in parsed_json
+        http = urllib3.PoolManager()
+        res = http.request('GET', query, timeout=60)
+        print(f"response code: {res.status}")
+        parsed_json = json.loads(res.data, strict=False)
+        assert parsed_json["code"] == "Ok"
+        assert metrics in parsed_json
     except AssertionError as er:
         raise ValueError(
-            f"Error while contacting OSRM instance : \n{er}"
+            f"Error while contacting OSRM instance: invalid response: {er}"
         ) from er
-    except Exception as err:
+    except (HTTPError) as err:
         raise ValueError(
-            f"Error while contacting OSRM instance : \n{err}"
+            f"Error while contacting OSRM instance: 500 error: {res.status}"
+        ) from err
+    except (JSONDecodeError) as err:
+        print(f"body: {res.data}")
+        raise ValueError(
+            f"Error while contacting OSRM instance: invalid response: {err}"
         ) from err
 
     durations = np.array(parsed_json[metrics], dtype=float)
@@ -445,9 +452,13 @@ def fetch_nearest(host, profile, coord):
     url = ''.join(['http://', host, '/nearest/',
                    profile, '/', str(coord[0]), ',', str(coord[1])])
     try:  # Querying the OSRM instance
-        with urlopen(Request(url)) as rep:
-            parsed_json = json.loads(rep.read(), strict=False)
-    except (URLError, HTTPError, ContentTooShortError):
+        http = urllib3.PoolManager()
+        res = http.request('GET', url, timeout=60)
+        print(f"response code: {res.status}")
+        parsed_json = json.loads(res.data, strict=False)
+    except HTTPError:
+        return False
+    except JSONDecodeError:
         return False
     if 'code' not in parsed_json or "Ok" not in parsed_json['code']:
         return False

@@ -27,6 +27,7 @@ Development environment uses the following packages for QGIS 4.00:
 sudo apt install pyqt6-dev-tools pylint pycodestyle python3-scipy python3-matplotlib python3-numpy python3-shapely python3-qgis
 sudo pip install setuptools --break-system-packages
 sudo pip install qgis-plugin-ci --break-system-packages
+sudo pip install bandit --break-system-packages
 ```
 
 Features

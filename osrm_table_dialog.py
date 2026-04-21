@@ -61,9 +61,7 @@ class OSRMTableDialog(QDialog, FORM_CLASS_TABLE_DIALOG_BASE, TemplateOsrm):
         self.comboBox_layer.setFilters(QgsMapLayerProxyModel.PointLayer)
 
         id_field_filter = (
-            QgsFieldProxyModel.Double | QgsFieldProxyModel.Int
-            | QgsFieldProxyModel.LongLong | QgsFieldProxyModel.Numeric
-            | QgsFieldProxyModel.String
+            QgsFieldProxyModel.Double | QgsFieldProxyModel.Int | QgsFieldProxyModel.LongLong | QgsFieldProxyModel.Numeric | QgsFieldProxyModel.String  # pylint: disable=line-too-long
         )
         self.comboBox_idfield_2.setFilters(id_field_filter)
         self.comboBox_idfield.setFilters(id_field_filter)
@@ -152,8 +150,7 @@ class OSRMTableDialog(QDialog, FORM_CLASS_TABLE_DIALOG_BASE, TemplateOsrm):
         table_durations = table[0]
 
         # Convert the matrix in minutes if needed :
-        if (self.checkBox_minutes.isChecked() and
-                self.metrics == METRICS_DURATION):
+        if (self.checkBox_minutes.isChecked() and self.metrics == METRICS_DURATION):  # pylint: disable=line-too-long
             table_durations = (table_durations / 60.0).round(2)
 
         # Replace the value corresponding to a not-found connection :

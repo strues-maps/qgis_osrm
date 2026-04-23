@@ -320,7 +320,6 @@ class OSRMDialog(QDialog, FORM_CLASS_DIALOG_BASE, TemplateOsrm):
 
         try:
             self.parsed = self.query_url(url)
-            assert "code" in self.parsed
         except (
             AssertionError,
             Exception

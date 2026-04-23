@@ -107,7 +107,11 @@ class TemplateOsrm:
         """Loads and decodes json data from specified url"""
         http = urllib3.PoolManager()
         res = http.request('GET', url, timeout=60)
-        return json.loads(res.data, strict=False)
+        print(f"response code: {res.status}")
+        parsed_json = json.loads(res.data, strict=False)
+        assert 'code' in parsed_json
+        assert parsed_json["code"] == "Ok"
+        return parsed_json
 
     def print_about(self):
         """Shows plugin about dialog box"""

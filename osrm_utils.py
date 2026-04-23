@@ -391,6 +391,7 @@ def fetch_table(url, api_key, coords_src, coords_dest, metrics='Durations'):
         res = http.request('GET', query, timeout=60)
         print(f"response code: {res.status}")
         parsed_json = json.loads(res.data, strict=False)
+        assert 'code' in parsed_json
         assert parsed_json["code"] == "Ok"
         assert metrics in parsed_json
     except AssertionError as er:
@@ -459,8 +460,10 @@ def fetch_nearest(host, profile, coord):
     except HTTPError:
         return False
     except JSONDecodeError:
+        print(f"body: {res.data}")
         return False
     if 'code' not in parsed_json or "Ok" not in parsed_json['code']:
+        print(f"body: {res.data}")
         return False
 
     return parsed_json["waypoints"][0]["location"]

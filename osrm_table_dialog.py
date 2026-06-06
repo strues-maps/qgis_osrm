@@ -199,11 +199,11 @@ class OSRMTableDialog(QDialog, FORM_CLASS_TABLE_DIALOG_BASE, TemplateOsrm):
                         )
                 out_file.close()
                 QMessageBox.information(
-                    self.iface.mainWindow(), 'Done',
+                    self, 'Done',
                     f"OSRM table saved in {self.filename}")
         except Exception as err:
             QMessageBox.information(
-                self.iface.mainWindow(), 'Error',
+                self, 'Error',
                 "Something went wrong...(See Qgis log for traceback)")
             QgsMessageLog.logMessage(
                 f"OSRM-plugin error report :\n {str(err)}",

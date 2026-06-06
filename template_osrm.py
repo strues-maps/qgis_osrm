@@ -115,7 +115,7 @@ class TemplateOsrm:
 
     def print_about(self):
         """Shows plugin about dialog box"""
-        mbox = QMessageBox(self.iface.mainWindow())
+        mbox = QMessageBox(self)
         mbox.setIcon(Qgis_QMessageBox_Icon_Information())
         mbox.setWindowTitle('About')
         mbox.setTextFormat(Qt_TextFormat_RichText())
@@ -136,12 +136,32 @@ class TemplateOsrm:
 
     def print_no_features(self):
         """Shows no features selected dialog box"""
-        mbox = QMessageBox(self.iface.mainWindow())
+        mbox = QMessageBox(self)
         mbox.setIcon(Qgis_QMessageBox_Icon_Warning())
         mbox.setWindowTitle('No features selected')
         mbox.setTextFormat(Qt_TextFormat_RichText())
         mbox.setText(
             "<p>No features were selected on map.</p>")
+        mbox.open()
+
+    def print_provider_saved(self, name):
+        """Shows provider saved dialog box"""
+        mbox = QMessageBox(self)
+        mbox.setIcon(Qgis_QMessageBox_Icon_Information())
+        mbox.setWindowTitle(''.join(['Provider "', name, '" saved']))
+        mbox.setTextFormat(Qt_TextFormat_RichText())
+        mbox.setText(
+            "<p>Changes in provider details successfully saved.</p>")
+        mbox.open()
+
+    def print_provider_deleted(self, name):
+        """Shows provider saved dialog box"""
+        mbox = QMessageBox(self)
+        mbox.setIcon(Qgis_QMessageBox_Icon_Information())
+        mbox.setWindowTitle(''.join(['Provider "', name, '" deleted']))
+        mbox.setTextFormat(Qt_TextFormat_RichText())
+        mbox.setText(
+            "<p>Provider successfully removed from the list.</p>")
         mbox.open()
 
     def store_origin(self, point):
@@ -223,7 +243,7 @@ class TemplateOsrm:
                 self.api_key = self.providers[provider_index]["api_key"]
         except (AssertionError, ValueError) as err:
             QMessageBox.warning(
-                self.iface.mainWindow(),
+                self,
                 'Error',
                 f"Invalid providers configuration file! {err}"
             )

@@ -69,7 +69,7 @@ class OSRMProviderDialog(
 
         if is_submitted and name == '':
             QMessageBox.information(
-                self.iface.mainWindow(),
+                self,
                 'Error',
                 "Provider name must not be empty")
             return -1
@@ -77,7 +77,7 @@ class OSRMProviderDialog(
         for provider in self.providers:
             if provider["name"] == name:
                 QMessageBox.information(
-                    self.iface.mainWindow(),
+                    self,
                     'Error',
                     "Provider name must be unique")
                 return -1
@@ -85,6 +85,7 @@ class OSRMProviderDialog(
         self.providers.append({"name": name, "base_url": "", "api_key": ""})
         write_providers_config(self.providers)
         self.populate_combo_box_provider()
+        self.print_provider_saved(name)
 
         return 0
 
@@ -95,14 +96,14 @@ class OSRMProviderDialog(
         if provider_index > 0:
             if len(name) == 0:
                 QMessageBox.information(
-                    self.iface.mainWindow(),
+                    self,
                     'Error',
                     "Provider name must not be empty")
                 return -1
             for i, provider in enumerate(self.providers):
                 if (i != provider_index - 1) and (provider["name"] == name):
                     QMessageBox.information(
-                        self.iface.mainWindow(),
+                        self,
                         'Error',
                         "Provider name must be unique")
                     return -1
@@ -114,16 +115,18 @@ class OSRMProviderDialog(
             provider["base_url"] = self.line_edit_base_url.text()
             write_providers_config(self.providers)
             self.populate_combo_box_provider()
-
+            self.print_provider_saved(self.provider_name)
         return 0
 
     def delete_provider(self):
         """Handle delete provider action"""
         provider_index = self.combo_box_provider.currentIndex()
         if provider_index > 0:
+            provider = self.providers[provider_index - 1]
             del self.providers[provider_index - 1]
             write_providers_config(self.providers)
             self.populate_combo_box_provider()
+            self.print_provider_deleted(provider["name"])
 
     def provider_changed(self):
         """Handle provider selection action"""
@@ -172,7 +175,7 @@ class OSRMProviderDialog(
                 self.combo_box_provider.setCurrentIndex(provider_index)
         except (AssertionError, ValueError) as err:
             QMessageBox.warning(
-                self.iface.mainWindow(),
+                self,
                 'Error',
                 f"Invalid providers configuration file! {err}"
             )

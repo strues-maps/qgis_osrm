@@ -121,7 +121,7 @@ class OSRMBatchRouteDialog(QDialog, FORM_CLASS_BATCH_ROUTE, TemplateOsrm):
             return 0
         except Exception as err:
             QMessageBox.information(
-                self.iface.mainWindow(), 'Error',
+                self, 'Error',
                 "Something went wrong...(See Qgis log for traceback)")
             QgsMessageLog.logMessage(
                 f"OSRM-plugin error report :\n {str(err)}",
@@ -196,7 +196,7 @@ class OSRMBatchRouteDialog(QDialog, FORM_CLASS_BATCH_ROUTE, TemplateOsrm):
 
             if len(origin_ids_coords) * len(destination_ids_coords) > 100000:
                 QMessageBox.information(
-                    self.iface.mainWindow(), 'Info',
+                    self, 'Info',
                     "Too many route to calculate, try with less than 100000")
                 return -1
 
@@ -271,7 +271,7 @@ class OSRMBatchRouteDialog(QDialog, FORM_CLASS_BATCH_ROUTE, TemplateOsrm):
         is_add_layer = self.check_add_layer.isChecked()
         if (not is_shape and not is_add_layer):
             QMessageBox.information(
-                self.iface.mainWindow(),
+                self,
                 'Error',
                 "Output have to be saved and/or added to the canvas"
             )
@@ -286,7 +286,7 @@ class OSRMBatchRouteDialog(QDialog, FORM_CLASS_BATCH_ROUTE, TemplateOsrm):
 
         if nb_queries < 1:
             QMessageBox.information(
-                self.iface.mainWindow(),
+                self,
                 'Info',
                 f"Something went wrong append {self.filename}"
                 f" - No locations to request"
@@ -295,7 +295,7 @@ class OSRMBatchRouteDialog(QDialog, FORM_CLASS_BATCH_ROUTE, TemplateOsrm):
 
         if nb_queries > 20 and 'routing.openstreetmap.de' in self.base_url:
             QMessageBox.information(
-                self.iface.mainWindow(), 'Error',
+                self, 'Error',
                 "Please, don't make heavy requests on the public API")
             return -1
 
@@ -320,7 +320,7 @@ class OSRMBatchRouteDialog(QDialog, FORM_CLASS_BATCH_ROUTE, TemplateOsrm):
 
         if len(features) < 1:
             QMessageBox.information(
-                self.iface.mainWindow(),
+                self,
                 'Info',
                 f"Something wrong append {self.filename} - No feature fetched"
             )
@@ -412,7 +412,7 @@ class OSRMBatchRouteDialog(QDialog, FORM_CLASS_BATCH_ROUTE, TemplateOsrm):
                 self.iface.setActiveLayer(osrm_batch_route_layer)
                 return -1
             QMessageBox.information(
-                self.iface.mainWindow(), 'Info',
+                self, 'Info',
                 f"Result saved in {self.filename}")
         if self.check_add_layer.isChecked():
             self.iface.setActiveLayer(osrm_batch_route_layer)

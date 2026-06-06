@@ -143,7 +143,7 @@ class OSRMAccessDialog(QDialog, FORM_CLASS_ACCESS_DIALOG_BASE, TemplateOsrm):
             return self.transform_str_to_coords_list(pts)
         except (AssertionError, ValueError):
             QMessageBox.warning(
-                self.iface.mainWindow(),
+                self,
                 'Error',
                 "Invalid coordinates selected!"
             )
